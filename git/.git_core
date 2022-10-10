@@ -1,0 +1,5 @@
+[core]
+autocrlf = false
+quotepath = false
+editor = vim
+pager = delta

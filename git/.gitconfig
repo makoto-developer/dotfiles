@@ -1,0 +1,23 @@
+[include]
+path = ~/.git_user
+[push]
+default = current
+[include]
+path = ~/.git_delta
+[include]
+path = ~/.git_core
+[include]
+path = ~/.git_globalignore
+[include]
+path = ~/.git_alias
+[init]
+defaultBranch = main
+[pull]
+rebase = false
+[filter "lfs"]
+process = git-lfs filter-process
+required = true
+clean = git-lfs clean -- %f
+smudge = git-lfs smudge -- %f
+[interactive]
+diffFilter = delta --color-only

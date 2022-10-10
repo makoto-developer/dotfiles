@@ -1,0 +1,63 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'Shougo/denite.nvim'
+hook_add = '''
+  source ~/.config/nvim/plugins/denite.vim
+'''
+
+[[plugins]]
+repo = 'osyo-manga/vim-anzu'
+hook_add = '''
+  source ~/.config/nvim/plugins/anzu.vim
+'''
+
+[[plugins]]
+repo = 'preservim/nerdtree'
+hook_add = '''
+  source ~/.config/nvim/plugins/nerdtree.vim
+'''
+
+
+# Molokaiテーマ
+#[[plugins]]
+#repo = 'tomasr/molokai'
+#hook_add = '''
+#augroup SetColorScheme
+#  au!
+#  au VimEnter * nested colorscheme molokai
+#augroup END
+#'''
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+on_event = 'InsertEnter'
+hook_add = '''
+  source ~/.config/nvim/plugins/deoplete.vim
+'''
+
+# Linter
+[[plugins]]
+repo = 'w0rp/ale'
+hook_add = '''
+  source ~/.config/nvim/plugins/ale.vim
+'''
+
+# [{の終了タグを保管する
+[[plugins]]
+repo = 'Townk/vim-autoclose'
+
+# あいまい検索
+[[plugins]]
+repo = 'junegunn/fzf'
+build = './install --bin'
+merged = '0'
+
+# あいまい検索
+[[plugins]]
+repo = 'junegunn/fzf.vim'
+depends = 'fzf'
+hook_add = '''
+  source ~/.config/nvim/plugins/fzf.vim
+'''
