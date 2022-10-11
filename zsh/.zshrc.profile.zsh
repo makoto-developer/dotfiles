@@ -81,3 +81,15 @@ export DOCKER_HOST=unix://$HOME/.lima/docker/sock/docker.sock
 ## nvim
 export XDG_CONFIG_HOME="$HOME/.config"
 
+## ghq + peco
+export GHQ_ROOT="$HOME/work/"
+function peco-src () {
+  local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N peco-src
+bindkey '^]' peco-src

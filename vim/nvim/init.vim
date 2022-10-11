@@ -29,15 +29,11 @@ set nobackup
 set noswapfile
 
 " ヤンクをクリップボードへ繋ぐ
-if has("clipboard")
-  set clipboard=unnamed
-endif
-""if !has('nvim')
-""endif
-set clipboard=unnamed
-"set mousue=a
+set clipboard+=unnamed
+
+
 " yでコピーした時にクリップボードに入る
-""set guioptions+=a
+set guioptions+=a
 
 "****************************************************************
 " 編集
@@ -45,9 +41,9 @@ set clipboard=unnamed
 " 編集中のファイルが変更されたら自動で読み直す
 set autoread
 
-" Undoをファイルが閉じても戻れるように "事前に実行しておく-> `mk -p /Users/user/.vim/undo`
+" Undoをファイルが閉じても戻れるように "事前に実行しておく-> `mk -p ~/.vim/undo`
 if has('persistent_undo')
-	let undo_path = expand('/Users/user/.vim/undo')
+	let undo_path = expand('~/.vim/undo')
 	exe 'set undodir=' .. undo_path
 	set undofile
 endif
@@ -174,6 +170,7 @@ nnoremap sv :<C-u>vs<CR><C-w>l
 nnoremap sn :NERDTree<CR> " NERDTree
 nnoremap sf :Files<CR>    " fzf
 nnoremap sw :Windows<CR>  " fzf
+" マルチカーソル
 
 
 
@@ -304,7 +301,7 @@ if has('nvim')
   " fzf
   let $FZF_DEFAULT_COMMAND='find . -not -regex ".*node_modules/.*" -not -regex ".*\.git/.*" -not -regex ".*\.next/.*" -not -regex ".*\.idea/.*" -not -regex ".*\.idea/"'
 
+else
+  syntax on
 endif
-
-
 

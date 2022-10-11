@@ -21,3 +21,5 @@ clean = git-lfs clean -- %f
 smudge = git-lfs smudge -- %f
 [interactive]
 diffFilter = delta --color-only
+[ghq]
+	root = ~/work

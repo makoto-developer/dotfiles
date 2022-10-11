@@ -21,30 +21,26 @@ git clone git@github.com:makoto-developer/dotfiles.git
 ### git
 
 
-ファイルを作成する(シークレット情報をgit管理したくないので手動で作成する)
+ファイルを作成する `vi ~/.git_user`(シークレット情報をgit管理したくないので手動で作成する)
 ```shell
-vi ~/.git_user
-
-
 # githubのユーザ名を入れる
 [user]
 name = <<< your name >>>
 email = <<< your email >>>
+```
 
 
-vi ~/.git_github
+ファイルを作成する `vi ~/.git_github`
 
+```shell
 [github]
 user = "<<< github account id >>>"
+```
 
-
-# global ignoreの設定ファイルを追加
-vi ~/.git_globalignore
-
-
+ファイルを作成する `vi ~/.git_globalignore`
+```
 [core] 
-excludesFile = <<< ホームディレクトリの絶対パズ /User/xxxxx >>>/git_globalignore
-
+excludesFile = <<< ホームディレクトリの絶対パス/User/xxxxx >>>/git_globalignore
 ```
 
 シンボリックを配置

@@ -61,3 +61,7 @@ depends = 'fzf'
 hook_add = '''
   source ~/.config/nvim/plugins/fzf.vim
 '''
+
+# マルチカーソル intellijでいうctrl + g
+[[plugins]]
+repo = 'terryma/vim-multiple-cursors'
