@@ -30,13 +30,6 @@ hook_add = '''
 #augroup END
 #'''
 
-[[plugins]]
-repo = 'Shougo/deoplete.nvim'
-on_event = 'InsertEnter'
-hook_add = '''
-  source ~/.config/nvim/plugins/deoplete.vim
-'''
-
 # Linter
 [[plugins]]
 repo = 'w0rp/ale'
