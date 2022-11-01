@@ -28,6 +28,7 @@ alias dr="docker"
 alias dc="docker-compose"
 alias clip='pbcopy'
 alias tel='telepresence'
+alias fz='fzf'
 
 
 ## cd系
