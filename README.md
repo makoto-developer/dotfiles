@@ -22,6 +22,7 @@ git clone git@github.com:makoto-developer/dotfiles.git
 
 
 ファイルを作成する `vi ~/.git_user`(シークレット情報をgit管理したくないので手動で作成する)
+
 ```shell
 # githubのユーザ名を入れる
 [user]
@@ -38,9 +39,10 @@ user = "<<< github account id >>>"
 ```
 
 ファイルを作成する `vi ~/.git_globalignore`
+
 ```
 [core] 
-excludesFile = <<< ホームディレクトリの絶対パス/User/xxxxx >>>/git_globalignore
+excludesFile = <<< ホームディレクトリの絶対パス/User/xxxxx >>>/.git_globalignore
 ```
 
 シンボリックを配置
