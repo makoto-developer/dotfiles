@@ -49,11 +49,11 @@ excludesFile = <<< ホームディレクトリの絶対パス/User/xxxxx >>>/.gi
 
 ```shell
 cd ~
-ln -s dotfiles/git/.gitconfig ~/
-ln -s dotfiles/git/.git_alias ~/
-ln -s dotfiles/git/.git_core ~/
-ln -s dotfiles/git/.git_delta ~/
-ln -s dotfiles/git/.gitignore_global ~/
+ln -s ~/dotfiles/git/.gitconfig ~/
+ln -s ~/dotfiles/git/.git_alias ~/
+ln -s ~/dotfiles/git/.git_core ~/
+ln -s ~/dotfiles/git/.git_delta ~/
+ln -s ~/dotfiles/git/.gitignore_global ~/
 ```
 
 Gitの設定をする
@@ -68,15 +68,15 @@ git config --global user.email "<<<email address>>>"
 
 ```shell
 cd ~
-ln -s dotfiles/vim/nvim/init.vim ~/.vimrc
-ln -s dotfiles/vim/nvim/init.vim ~/.ideavimrc
+ln -s ~/dotfiles/vim/nvim/init.vim ~/.vimrc
+ln -s ~/dotfiles/vim/nvim/init.vim ~/.ideavimrc
 ```
 
 ### nvim
 
 ```shell
 cd ~
-ln -s dotfiles/vim/nvim ~/.config/
+ln -s ~/dotfiles/vim/nvim ~/.config/
 ```
 
 ### zsh
@@ -88,10 +88,10 @@ cd ~
 cp -p .zshrc .zshrc.origin
 
 # シンボリックリンクを貼って行く
-ln -s dotfiles/zsh/.zshrc ~/
-ln -s dotfiles/zsh/.zshrc.profile.zsh ~/
-ln -s dotfiles/zsh/.zshrc.profile.alias.zsh ~/
-ln -s dotfiles/zsh/.zshrc.profile.iterm.zsh ~/
+ln -s ~/dotfiles/zsh/.zshrc ~/
+ln -s ~/dotfiles/zsh/.zshrc.profile.zsh ~/
+ln -s ~/dotfiles/zsh/.zshrc.profile.alias.zsh ~/
+ln -s ~/dotfiles/zsh/.zshrc.profile.iterm.zsh ~/
 ```
 
 ### ターミナルのテーマを変更(zprezto)
