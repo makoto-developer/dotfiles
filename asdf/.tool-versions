@@ -1,0 +1,8 @@
+elixir 1.13.4-otp-25
+erlang 25.0.4
+nodejs 16.17.0
+protoc 3.20.1
+protoc-gen-go 1.5.2
+golang 1.19
+haskell 9.4.2
+rust 1.64.0
