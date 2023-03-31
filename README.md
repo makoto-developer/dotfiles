@@ -57,14 +57,6 @@ ln -s ~/dotfiles/git/.git_delta ~/
 ln -s ~/dotfiles/git/.gitignore_global ~/
 ```
 
-Gitの設定をする
-
-```shell
-git config --global core.excludesFile ~/.gitignore_global
-git config --global user.name "<<<user name>>>"
-git config --global user.email "<<<email address>>>"
-```
-
 ### vim
 
 ```shell
