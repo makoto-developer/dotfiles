@@ -72,31 +72,14 @@ cd ~
 ln -s ~/dotfiles/vim/nvim ~/.config/
 ```
 
-### zsh
+# fish
+
+準備中...
 
 ```shell
-cd ~
+ln -s ~/dotfiles/fish/config.fish ~/.config/fish/
 
-# .zshrcがすでに存在する場合はバックアップ
-cp -p .zshrc .zshrc.origin
-
-# シンボリックリンクを貼って行く
-ln -s ~/dotfiles/zsh/.zshrc ~/
-ln -s ~/dotfiles/zsh/.zshrc.profile.zsh ~/
-ln -s ~/dotfiles/zsh/.zshrc.profile.alias.zsh ~/
-ln -s ~/dotfiles/zsh/.zshrc.profile.iterm.zsh ~/
 ```
-
-### ターミナルのテーマを変更(zprezto)
-
-```shell
-# ファイルが存在することを確認
-ll ~/.zprezto/modules/prompt/external/agnoster/agnoster.zsh-theme
-
-mv ~/.zprezto/modules/prompt/external/agnoster/agnoster.zsh-theme ~/.zprezto/modules/prompt/external/agnoster/agnoster.zsh-theme-original
-ln -s ~/dotfiles/zsh/agnoster.zsh-theme-custom ~/.zprezto/modules/prompt/external/agnoster/agnoster.zsh-theme
-```
-
 
 ## Warning
 
