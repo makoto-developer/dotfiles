@@ -57,12 +57,19 @@ ln -s ~/dotfiles/git/.git_delta ~/
 ln -s ~/dotfiles/git/.gitignore_global ~/
 ```
 
+### asdf
+
+```shell
+ln -s ~/dotfiles/asdf/.tool-versions ~/
+```
+
 ### vim
 
 ```shell
 cd ~
 ln -s ~/dotfiles/vim/nvim/init.vim ~/.vimrc
 ln -s ~/dotfiles/vim/nvim/init.vim ~/.ideavimrc
+mkdir -p ~/.vim/undo
 ```
 
 ### nvim

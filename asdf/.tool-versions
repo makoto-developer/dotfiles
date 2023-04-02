@@ -1,5 +1,5 @@
-elixir 1.13.4-otp-25
-erlang 25.0.4
+elixir 1.14.3-otp-25
+erlang 25.3
 nodejs 16.17.0
 protoc 3.20.1
 protoc-gen-go 1.5.2

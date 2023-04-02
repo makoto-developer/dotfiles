@@ -1,7 +1,8 @@
 "****************************************************************
 " シェルを指定
 "****************************************************************
-set shell=/bin/zsh
+set shell=/usr/local/bin/fish
+
 
 "****************************************************************
 " エンコード
@@ -28,12 +29,17 @@ set nobackup
 " スワップファイルを作成しない
 set noswapfile
 
+
+
+"****************************************************************
+" クリップボード
+"****************************************************************
 " ヤンクをクリップボードへ繋ぐ
 set clipboard+=unnamed
-
-
 " yでコピーした時にクリップボードに入る
 set guioptions+=a
+
+
 
 "****************************************************************
 " 編集
@@ -41,7 +47,7 @@ set guioptions+=a
 " 編集中のファイルが変更されたら自動で読み直す
 set autoread
 
-" Undoをファイルが閉じても戻れるように "事前に実行しておく-> `mk -p ~/.vim/undo`
+" Undoをファイルが閉じても戻れるように "事前に実行しておく-> `mkdir -p ~/.vim/undo`
 if has('persistent_undo')
 	let undo_path = expand('~/.vim/undo')
 	exe 'set undodir=' .. undo_path
@@ -85,10 +91,10 @@ set showmatch
 " 対応する括弧やブレースを表示
 set showmatch matchtime=1
 " コマンドラインの履歴を5000件保存する
-set history=5000
+set history=1000
 " 行末のスペースを可視化
 "set listchars=tab:^\ ,trail:~
-" コメントの色を水色(デフォルトだと非常に見ずらいので変更)
+" コメントの色を水色(デフォルトだと見ずらいので変更)
 hi Comment ctermfg=darkgray
 
 " Colorのメモ
@@ -292,7 +298,6 @@ if has('nvim')
 
   " NERDTree設定
   autocmd vimenter * NERDTree      " NERDTreeを常に表示
-  "let g:NERDTreeWinPos = "left"    " NERDTreeを常に左に表示
   let NERDTreeShowHidden=1         " 隠しファイルを常に表示
 
   " Molokaiテーマ
