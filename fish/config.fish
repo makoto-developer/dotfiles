@@ -65,10 +65,13 @@ if status is-interactive
     
     
     ## コマンドで話す
-    ### WARNING! 音声を予めダウンロードしておく
+    ### 音声を予めダウンロードしておくこと!
     alias alex='say -v Alex -r 200 -i @argv'
     alias vicky='say -v Vicki -r 200 -i @argv'
     alias kyoko='say -v Kyoko -r 200 -i @argv'
+
+    # fish colors
+    export LSCOLORS=gxfxcxdxbxegedabagacad
 
 end
 
