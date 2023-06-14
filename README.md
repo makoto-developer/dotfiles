@@ -1,6 +1,5 @@
 # dotfiles
 
-
 macOSで使っている設定を管理
 
 ## 導入手順
@@ -13,14 +12,15 @@ cd ~
 git clone git@github.com:makoto-developer/dotfiles.git
 ```
 
+
 ### iterm用のプロファイルを読み込む
 
 ```shell
 ./iterm/Profiles.json
 ```
 
-### git
 
+### git
 
 ファイルを作成する `vi ~/.git_user`(シークレット情報をgit管理したくないので手動で作成する)
 
@@ -30,7 +30,6 @@ git clone git@github.com:makoto-developer/dotfiles.git
 name = <<< your name >>>
 email = <<< your email >>>
 ```
-
 
 ファイルを作成する `vi ~/.git_github`
 
@@ -57,11 +56,13 @@ ln -s ~/dotfiles/git/.git_delta ~/
 ln -s ~/dotfiles/git/.gitignore_global ~/
 ```
 
+
 ### asdf
 
 ```shell
 ln -s ~/dotfiles/asdf/.tool-versions ~/
 ```
+
 
 ### vim
 
@@ -72,6 +73,7 @@ ln -s ~/dotfiles/vim/nvim/init.vim ~/.ideavimrc
 mkdir -p ~/.vim/undo
 ```
 
+
 ### nvim
 
 ```shell
@@ -79,14 +81,14 @@ cd ~
 ln -s ~/dotfiles/vim/nvim ~/.config/
 ```
 
-# fish
 
-準備中...
+# fish
 
 ```shell
 ln -s ~/dotfiles/fish/config.fish ~/.config/fish/
-
+ln -s ~/dotfiles/fish/init.fish ~/.config/omf/
 ```
+
 
 ## Warning
 
