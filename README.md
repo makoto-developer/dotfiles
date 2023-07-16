@@ -87,6 +87,7 @@ ln -s ~/dotfiles/vim/nvim ~/.config/
 ```shell
 ln -s ~/dotfiles/fish/config.fish ~/.config/fish/
 ln -s ~/dotfiles/fish/init.fish ~/.config/omf/
+ln -s ~/dotfiles/fish/conf.d/  ~/.config/fish/
 ```
 
 
