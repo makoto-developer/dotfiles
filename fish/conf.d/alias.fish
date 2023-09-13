@@ -14,10 +14,9 @@ alias ....='cd ../../..'
 alias ..2='cd ../..'
 alias ..3='cd ../../..'
 alias ..4='cd ../../../..'
-alias gohome='cd ~'
 
 # ls
-alias l='ls -ltrG'
+alias l='ls -ltraG'
 alias ll='ls -la'
 alias ls='ls -G'
 
@@ -38,20 +37,17 @@ alias gitbranchnameclip='git branch --show-current | clip' # ブランチ名を�
 alias gbn=gitbranchnameclip
 alias gcl='git clean -fd'                                  # 未追跡のファイル/ディレクトリを一撃で削除する
 
-# パスワードジェネレータ
+# その他
+alias d='docker'
+alias dc='docker-compose'
+
+# password generater
 alias passgen='openssl rand -base64 16 | pbcopy'
 alias passgenweak='openssl rand -hex 8 | pbcopy'
 alias passgenw=passgenweak
 
 
-# 便利
+# useful
 alias myip='curl https://ipinfo.io/json'    # ipアドレスを取得
 alias myhttp='ruby -run -e httpd . -p 8000' # カレントディレクトリを基準にHTTPサーバを起動
-
-
-# コマンドで話す
-## 音声を予めダウンロードしておくこと!
-alias alex='say -v Alex -r 200 -i @argv'
-alias vicky='say -v Vicki -r 200 -i @argv'
-alias kyoko='say -v Kyoko -r 200 -i @argv'
 

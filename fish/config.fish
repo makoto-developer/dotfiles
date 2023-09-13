@@ -16,5 +16,6 @@ if status is-interactive
 
     # agnoster theme
     set -g theme_nerd_fonts yes
+    source /usr/local/opt/asdf/libexec/asdf.fish
 end
 
