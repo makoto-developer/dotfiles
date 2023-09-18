@@ -38,8 +38,7 @@ alias gbn=gitbranchnameclip
 alias gcl='git clean -fd'                                  # 未追跡のファイル/ディレクトリを一撃で削除する
 
 # その他
-alias d='docker'
-alias dc='docker-compose'
+alias dr='docker'
 
 # password generater
 alias passgen='openssl rand -base64 16 | pbcopy'

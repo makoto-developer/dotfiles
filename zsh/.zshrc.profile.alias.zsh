@@ -12,7 +12,6 @@ alias grep='grep --color=auto'
 
 
 ## Library command
-alias vn='nvim'
 alias nv='nvim'
 alias el="elixir"
 alias iex="iex" # 省略しない
@@ -25,7 +24,6 @@ alias fr="firebase"
 #alias nodeb="nodebrew" # asdfへ移管されたので廃止
 alias k="kubectl"
 alias dr="docker"
-alias dc="docker-compose"
 alias clip='pbcopy'
 alias tel='telepresence'
 alias fz='fzf'
