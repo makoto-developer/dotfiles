@@ -2,5 +2,5 @@ elixir 1.15.5-otp-26
 erlang 26.0.2
 nodejs 18.17.1
 golang 1.21.1
-rust 1.72.0
+rust 1.72.1
 terraform 1.5.7
