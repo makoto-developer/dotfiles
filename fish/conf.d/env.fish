@@ -1,1 +1,1 @@
-export JOY="enjoy!"
+# fish env
