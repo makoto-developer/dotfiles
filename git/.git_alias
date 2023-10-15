@@ -1,3 +1,6 @@
+# Git alias
+# `git config --list | grep alias`でaliasの一覧が確認できる
+
 [alias]
 a = add
 ad = add
@@ -10,26 +13,25 @@ df = diff
 dfw = diff --word-diff
 dfn = diff --name-only
 cm = commit
-com = commit
 b = branch
-br = branch
 pl = pull
 co = checkout
 cp = cherry-pick
-pick = cherry-pick
 cl = clone
 re = rebase
 unstage = reset HEAD
 uns = unstage
-un = reset HEAD
 clear = clean -df
 
 # 便利ワザ集
-branch-name = !"git rev-parse --abbrev-ref HEAD|tr -d \\\\r\\\\n" # 現在のブランチ名を取得
+## 現在のブランチ名を取得
+branch-name = !"git rev-parse --abbrev-ref HEAD|tr -d \\\\r\\\\n"
 bname = branchname
-delete-merged-branch = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|master|main'|xargs git branch -d; };f" # マージ済みのブランチを削除
+## マージ済みのブランチを削除
+delete-merged-branch = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|master|main'|xargs git branch -d; };f"
 dmbranch = delete-merged-branch
-fixit = commit --amend --no-edit # 追加の変更を最新のコミットに追加する
+## 追加の変更を最新のコミットに追加する
+fixit = commit --amend --no-edit
 
 # graph系
 graph = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
