@@ -17,5 +17,9 @@ if status is-interactive
     # agnoster theme
     set -g theme_nerd_fonts yes
     source /usr/local/opt/asdf/libexec/asdf.fish
+
+    # go installしたコマンドを認識させる
+    set -g GOPATH (go env GOPATH)
+    fish_add_path $GOPATH/bin
 end
 
