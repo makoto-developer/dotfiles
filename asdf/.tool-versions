@@ -4,3 +4,4 @@ nodejs 18.17.1
 golang 1.21.1
 rust 1.72.1
 terraform 1.5.7
+bun 1.0.6
