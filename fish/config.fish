@@ -21,5 +21,22 @@ if status is-interactive
     # go installしたコマンドを認識させる
     set -g GOPATH (go env GOPATH)
     fish_add_path $GOPATH/bin
+
+    # flutter
+    set -g FLUTTERPATH $HOME/fvm/default
+    fish_add_path $FLUTTERPATH/bin
+
+    # pnpm
+    set -gx PNPM_HOME "/Users/user/Library/pnpm"
+    if not string match -q -- $PNPM_HOME $PATH
+      set -gx PATH "$PNPM_HOME" $PATH
+    end
 end
 
+
+# pnpm
+set -gx PNPM_HOME "/Users/user/Library/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
+end
+# pnpm end
