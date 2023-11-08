@@ -60,14 +60,14 @@ runtime! config/macro.vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " add shortcuts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap sn :NERDTree<CR> " NERDTree
-nnoremap sf :Files<CR>    " fzf
-nnoremap sw :Windows<CR>  " fzf
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" vim settings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set nu
+" NERDTree
+nnoremap sn :NERDTree<CR>
+" Search local files
+nnoremap sf :Files<CR>
+" Search nvim tabs
+snoremap sw :Windows<CR>
+" select multiple keywords intellij -> ctrl + g
+nnoremap <silent> <c-n> *Ncgn
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDTreeを自動的に起動する
@@ -79,4 +79,13 @@ else
 endif
 " NERDTree以外のバッファを閉じると自動でNERDTreeも閉じる
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" 隠しディレクトリを表示
+let NERDTreeShowHidden = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 行番号表示
+set nu
+
 
