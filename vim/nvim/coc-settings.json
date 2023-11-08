@@ -1,0 +1,13 @@
+{
+  "coc.preferences.formatOnSaveFiletypes": [
+    "python",
+    "go",
+    "dart",
+    "html",
+    "javascript",
+    "css",
+    "json",
+    "graphql",
+    "markdown"
+  ]
+}

@@ -4,6 +4,7 @@
 alias mk='mkdir'
 alias v='vim'
 alias vi='vim'
+alias n='nvim'
 alias grep='grep --color=auto'
 alias clip='pbcopy'
 
@@ -36,6 +37,9 @@ alias gd='git diff'
 alias gitbranchnameclip='git branch --show-current | clip' # ブランチ名をクリップボードにコピー
 alias gbn=gitbranchnameclip
 alias gcl='git clean -fd'                                  # 未追跡のファイル/ディレクトリを一撃で削除する
+
+# Node.js,npm,yarn,pnpm
+alias p="pnpm"
 
 # その他
 alias dr='docker'

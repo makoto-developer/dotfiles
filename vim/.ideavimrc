@@ -1,0 +1,4 @@
+" intellij/vim plugins
+
+" ヤンクをクリップボードへ繋ぐ
+set clipboard+=unnamed

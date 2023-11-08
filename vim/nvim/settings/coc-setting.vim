@@ -1,0 +1,21 @@
+" Language server
+let g:coc_global_extensions = [
+    \ 'coc-flutter',
+    \ 'coc-sql',
+    \ 'coc-go',
+    \ 'coc-rls',
+    \ 'coc-omnisharp',
+    \ 'coc-svelte',
+    \ 'coc-tsserver',
+    \ 'coc-vetur',
+    \ 'coc-vimlsp',
+    \ 'coc-docker',
+    \ 'coc-markdownlint',
+    \ 'coc-json',
+    \ 'coc-xml',
+    \ 'coc-yaml',
+    \ 'coc-css',
+    \ 'coc-cssmodules',
+    \ 'coc-spell-checker',
+    \ 'coc-snippets',
+\ ]
