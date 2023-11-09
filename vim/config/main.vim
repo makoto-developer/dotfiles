@@ -21,7 +21,6 @@ set t_Co=256
 
 
 
-
 "****************************************************************
 " バックアップ
 "****************************************************************
@@ -68,6 +67,12 @@ set smartindent
 set shiftwidth=2
 au FileType go setlocal sw=4 ts=4 sts=4 noet
 
+" 補完
+" 補完表示時のEnterで改行をしない
+inoremap <expr><CR>  pumvisible() ? "<C-y>" : "<CR>"
+set completeopt=menuone,noinsert
+inoremap <expr><C-n> pumvisible() ? "<Down>" : "<C-n>"
+inoremap <expr><C-p> pumvisible() ? "<Up>" : "<C-p>"
 
 
 "****************************************************************
