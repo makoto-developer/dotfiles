@@ -52,6 +52,19 @@ if dein#check_install()
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" NERDTreeを自動的に起動する
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if argc() == 0 || argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in")
+    autocmd vimenter * NERDTree
+else
+    autocmd vimenter * NERDTree | wincmd p
+endif
+" NERDTree以外のバッファを閉じると自動でNERDTreeも閉じる
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" 隠しディレクトリを表示
+let NERDTreeShowHidden = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " load original vim settings.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 runtime! config/main.vim
@@ -70,22 +83,7 @@ snoremap sw :Windows<CR>
 nnoremap <silent> <c-n> *Ncgn
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" NERDTreeを自動的に起動する
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if argc() == 0 || argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in")
-    autocmd vimenter * NERDTree
-else
-    autocmd vimenter * NERDTree | wincmd p
-endif
-" NERDTree以外のバッファを閉じると自動でNERDTreeも閉じる
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-" 隠しディレクトリを表示
-let NERDTreeShowHidden = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " vim settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 行番号表示
 set nu
-
-
