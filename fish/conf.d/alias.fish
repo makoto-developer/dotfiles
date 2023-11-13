@@ -2,8 +2,9 @@
 
 # basic
 alias mk='mkdir'
-alias v='vim'
-alias vi='vim'
+alias vim='vim'
+alias vi='nvim'
+alias v=vi
 alias n='nvim'
 alias grep='grep --color=auto'
 alias clip='pbcopy'
@@ -12,9 +13,8 @@ alias clip='pbcopy'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias ..2='cd ../..'
-alias ..3='cd ../../..'
 alias ..4='cd ../../../..'
+alias ..5='cd ../../../../..'
 
 # ls
 alias l='ls -ltraG'
@@ -53,4 +53,16 @@ alias passgenw=passgenweak
 # useful
 alias myip='curl https://ipinfo.io/json'    # ipアドレスを取得
 alias myhttp='ruby -run -e httpd . -p 8000' # カレントディレクトリを基準にHTTPサーバを起動
+
+# terraform
+alias terr='terraform'
+
+# docker
+alias d='docker'
+alias dr='docker'
+
+# kubernets
+alias k='kubectl'
+alias kx='kubectx'
+
 
