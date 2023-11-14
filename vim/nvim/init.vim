@@ -87,3 +87,6 @@ nnoremap <silent> <c-n> *Ncgn
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 行番号表示
 set nu
+" クリップボードを共有
+set clipboard+=unnamedplus
+
