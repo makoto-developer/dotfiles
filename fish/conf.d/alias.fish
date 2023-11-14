@@ -29,20 +29,14 @@ alias ga='git add -A'
 alias gb='git branch'
 alias gs='git status'
 alias gpl='git pull'
-alias gcm='git commit -m $argv'
 alias gps='git push'
-alias gco='git checkout'
-alias gcob='git checkout -b'
-alias gd='git diff'
 alias gitbranchnameclip='git branch --show-current | clip' # ブランチ名をクリップボードにコピー
 alias gbn=gitbranchnameclip
 alias gcl='git clean -fd'                                  # 未追跡のファイル/ディレクトリを一撃で削除する
 
 # Node.js,npm,yarn,pnpm
-alias p="pnpm"
-
-# その他
-alias dr='docker'
+alias p='pnpm'
+alias y='yarn'
 
 # password generater
 alias passgen='openssl rand -base64 16 | pbcopy'
@@ -59,10 +53,13 @@ alias terr='terraform'
 
 # docker
 alias d='docker'
-alias dr='docker'
+alias dr=d
 
 # kubernets
 alias k='kubectl'
-alias kx='kubectx'
+alias kx=k
 
-
+# GCP
+alias fire='firebase'
+alias fi=fire
+alias gl='gcloud'
