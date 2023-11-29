@@ -35,4 +35,4 @@ diffFilter = delta --color-only
 excludesFile = /Users/user/.gitignore_global
 
 [ghq]
-	root = ~/work/github/
+	root = ~/work/

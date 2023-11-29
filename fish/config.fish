@@ -16,6 +16,8 @@ if status is-interactive
 
     # agnoster theme
     set -g theme_nerd_fonts yes
+
+    # asdf
     source /usr/local/opt/asdf/libexec/asdf.fish
 
     # go installしたコマンドを認識させる
@@ -31,12 +33,12 @@ if status is-interactive
     if not string match -q -- $PNPM_HOME $PATH
       set -gx PATH "$PNPM_HOME" $PATH
     end
+
+    # pnpm
+    set -gx PNPM_HOME "/Users/user/Library/pnpm"
+    if not string match -q -- $PNPM_HOME $PATH
+      set -gx PATH "$PNPM_HOME" $PATH
+    end
 end
 
 
-# pnpm
-set -gx PNPM_HOME "/Users/user/Library/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH "$PNPM_HOME" $PATH
-end
-# pnpm end
