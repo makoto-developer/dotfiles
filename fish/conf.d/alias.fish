@@ -1,10 +1,10 @@
 # Alias
 
 # basic
-alias mk='mkdir'
 alias vim='vim'
 alias vi='nvim'
 alias v=vi
+alias mk='mkdir'
 alias grep='grep --color=auto'
 alias clip='pbcopy'
 
@@ -16,12 +16,12 @@ alias ..4='cd ../../../..'
 alias ..5='cd ../../../../..'
 
 # ls
-# 最新ファイルが下に表示されるように
-alias l='ls -ltraG'
+alias l='ls -ltraG' # 最新ファイルが下に表示される
 alias ll='ls -la'
 alias ls='ls -G'
 
 # git
+# 引数が必要なコマンドはgit.aliasで管理
 alias g='git'
 alias gf='git fetch'
 alias gfp='git fetch -p'
@@ -43,12 +43,10 @@ alias passgen='openssl rand -base64 16 | pbcopy'
 alias passgenweak='openssl rand -hex 8 | pbcopy'
 alias passgenw=passgenweak
 
-# useful
-alias myip='curl https://ipinfo.io/json'    # ipアドレスを取得
-alias myhttp='ruby -run -e httpd . -p 8000' # カレントディレクトリを基準にHTTPサーバを起動
 
 # terraform
 alias terr='terraform'
+alias tf=terr
 
 # docker
 alias dr='docker'
@@ -61,9 +59,9 @@ alias kubex='kubectx'
 alias kx=kubex
 
 # GCP
+alias gl='gcloud'
 alias fire='firebase'
 alias fi=fire
-alias gl='gcloud'
 
 # Jetbrains
 alias ws=webstorm

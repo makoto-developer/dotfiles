@@ -3,5 +3,7 @@ erlang 26.1.2
 nodejs 20.9.0
 golang 1.21.1
 rust 1.72.1
-terraform 1.5.7
+terraform 1.6.5
 bun 1.0.6
+python 3.9.18
+awscli 2.14.5

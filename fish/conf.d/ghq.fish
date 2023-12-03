@@ -5,21 +5,9 @@ function ghq_fzf_repo -d 'Repository search'
   commandline -f repaint
 end
 
-# fish key bindings
-function fish_user_key_bindings
-  bind \cg ghq_fzf_repo
+
+if bind -M insert >/dev/null 2>/dev/null
+    bind -M insert \cg '__ghq_repository_search'
 end
 
-
-function ghq_fzf_repo -d 'Repository search'
-  ghq list --full-path | fzf --reverse --height=100% | read select
-  [ -n "$select" ]; and cd "$select"
-  echo " $select "
-  commandline -f repaint
-end
-
-# fish key bindings
-function fish_user_key_bindings
-  bind \cg ghq_fzf_repo
-end
-
+bind \cg 'ghq_fzf_repo'
