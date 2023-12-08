@@ -2,3 +2,4 @@
 
 " ヤンクをクリップボードへ繋ぐ
 set clipboard+=unnamed
+
