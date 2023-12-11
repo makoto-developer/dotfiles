@@ -76,7 +76,7 @@ inoremap <expr><C-p> pumvisible() ? "<Up>" : "<C-p>"
 
 
 "****************************************************************
-" Display
+" 表示
 "****************************************************************
 syntax on
 "set nu
@@ -97,6 +97,9 @@ set showmatch matchtime=1
 set history=1000
 " コメントの色を水色
 hi Comment ctermfg=darkgray
+" 全角記号が重なってしまうので、幅を自動調整
+set ambiwidth=single
+
 
 " Colorのメモ
 " term	白黒端末での属性

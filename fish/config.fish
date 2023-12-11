@@ -29,6 +29,10 @@ if status is-interactive
     if not string match -q -- $PNPM_HOME $PATH
       set -gx PATH "$PNPM_HOME" $PATH
     end
+
+    # dotnetは一旦使わなくなったので除外
+    #set -gx DOTNET_ROOT "$HOME/dotnet"
+    #set -gx PATH "$DOTNET_ROOT" $PATH
 end
 
 

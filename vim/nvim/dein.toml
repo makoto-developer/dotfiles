@@ -1,6 +1,10 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
+# 文字を囲む
+[[plugins]]
+repo = 'tpope/vim-surround'
+
 [[plugins]]
 repo = 'Shougo/denite.nvim'
 hook_add = '''
