@@ -3,3 +3,21 @@
 " ヤンクをクリップボードへ繋ぐ
 set clipboard+=unnamed
 
+" インクリメンタルサーチ
+set incsearch
+
+" 検索結果のハイライト
+:set hlsearch
+
+" 検索の大文字小文字を無視
+set ignorecase
+
+
+" 検索結果の色を変える
+hi Search ctermbg=Yellow
+hi Search ctermfg=Black
+hi Visual ctermbg=magenta
+hi Visual ctermfg=Black
+
+" 検索結果のハイライトを消去
+nnoremap <Esc><Esc> <ESC>:nohlsearch<CR><ESC>
