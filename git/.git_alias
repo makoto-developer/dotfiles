@@ -43,3 +43,8 @@ gla = gg --all
 l = log --oneline
 ld = log --decorate --oneline
 lg = log --decorate --oneline --graph
+
+# その他
+## 特定のコミットログのファイル名のみを表示
+getFileNameOnly = "!getFileNameOnly () { show --name-only --pretty="" $1;};getFileNameOnly"
+lf = getFileNameOnly
