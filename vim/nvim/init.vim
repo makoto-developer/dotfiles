@@ -67,8 +67,7 @@ let NERDTreeShowHidden = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " load original vim settings.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-runtime! config/main.vim
-runtime! config/macro.vim
+runtime! config/*.vim
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " add shortcuts
@@ -79,7 +78,7 @@ nnoremap sn :NERDTree<CR>
 nnoremap sf :Files<CR>
 " Search nvim tabs
 snoremap sw :Windows<CR>
-" select multiple keywords intellij -> ctrl + g
+" select multiple keywords intellij -> ctrl + g, canceling ctrl + c
 nnoremap <silent> <c-n> *Ncgn
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

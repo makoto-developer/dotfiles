@@ -170,7 +170,7 @@ nnoremap <C-l> <C-w>l
 set virtualedit=onemore
 " 行をまたいで移動
 set whichwrap=b,s,h,l,<,>,[,],~
-" ウィンドウの移動f
+" ウィンドウの移動
 nnoremap sj <C-w>j
 nnoremap sk <C-w>k
 nnoremap sl <C-w>l
