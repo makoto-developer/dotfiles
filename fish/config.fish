@@ -37,6 +37,6 @@ end
 
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-set --export --prepend PATH "/Users/user/.rd/bin"
+#set --export --prepend PATH "/Users/user/.rd/bin"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
