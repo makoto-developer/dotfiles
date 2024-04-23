@@ -148,13 +148,13 @@ nnoremap <Esc><Esc> <ESC>:nohlsearch<CR><ESC>
 inoremap {<Enter> {}<Left><CR><ESC><S-o>
 inoremap [<Enter> []<Left><CR><ESC><S-o>
 inoremap (<Enter> ()<Left><CR><ESC><S-o>
-inoremap \<<Enter> \<\><Left><CR><ESC><S-o>
 
 " クオーテーションの補完
 inoremap ' ''<LEFT>
 inoremap " ""<LEFT>
+inoremap ` ``<LEFT>
 
-" Ctrl + hjilでウィンドウ移動ができる
+" Ctrl + w -> hjilでウィンドウ移動ができる
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k

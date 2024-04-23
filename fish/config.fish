@@ -33,6 +33,9 @@ if status is-interactive
     # dotnetは一旦使わなくなったので除外
     #set -gx DOTNET_ROOT "$HOME/dotnet"
     #set -gx PATH "$DOTNET_ROOT" $PATH
+
+    # vim
+    mkdir -p ~/.vim/undo
 end
 
 
