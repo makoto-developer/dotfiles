@@ -65,12 +65,13 @@ alias fire='firebase'
 alias fi=fire
 
 # Jetbrains
+alias i=idea
 alias storm=webstorm
 alias webs=storm
 alias ws=storm
 alias land=goland
 alias charm=pycharm
 alias rover=rustrover
-alias rov=rover
+alias rr=rustrover
 alias grip=datagrip
 

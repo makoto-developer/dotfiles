@@ -11,3 +11,4 @@ if bind -M insert >/dev/null 2>/dev/null
 end
 
 bind \cg 'ghq_fzf_repo'
+

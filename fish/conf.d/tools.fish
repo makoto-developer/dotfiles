@@ -1,4 +1,5 @@
 # tools.fish
+# 便利なマクロをここで管理
 
 # 強いパスワードを生成
 function genpass
