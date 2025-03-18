@@ -8,6 +8,8 @@ if status is-interactive
     set -g fish_prompt_pwd_full_dirs 0 # プロンプトのディレクトリ名を省略させない
     
     # asdf
+    set -g ASDF_DATA_DIR /Users/user/.asdf
+    set -gx PATH "$ASDF_DATA_DIR/shims" $PATH
     source /usr/local/opt/asdf/libexec/asdf.fish
 
     # go installしたコマンドを認識させる
