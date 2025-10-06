@@ -2,7 +2,6 @@
 
 function changeBackgroundColor
   switch $argv
-    case 'prod'
     case 'prd'
       echo -ne "\033]1337;SetColors=bg=330000\a"
     case 'stg'
@@ -16,7 +15,7 @@ function changeBackgroundColor
   end
 end
 
-alias prod='changeBackgroundColor "prod"'
+alias prd='changeBackgroundColor "prd"'
 alias stg='changeBackgroundColor "stg"'
 alias work='changeBackgroundColor "work"'
 alias work2='changeBackgroundColor "work2"'

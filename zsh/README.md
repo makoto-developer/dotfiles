@@ -1,4 +1,6 @@
-fishに移動したのでzshは使われなくなります。
+# ⚠️fishを使うようになったので廃止
+
+------------------
 
 ```shell
 mv  ~/.zshrc  ~/.zshrc.original

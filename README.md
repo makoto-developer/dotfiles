@@ -9,7 +9,19 @@ macOSの設定を管理
 ```shell
 # ホームディレクトリにdotfilesリポジトリを置く
 cd ~
+
+## ghqな人はこっち
+ghq get https://github.com/makoto-developer/dotfiles.git
+ln -s ln -s ~/work/repositories/github.com/makoto-developer/dotfiles ~/dotfiles
+
+## ghq以外の人はこっち
+
+cd ~
 git clone git@github.com:makoto-developer/dotfiles.git
+```
+
+```cookie
+
 ```
 
 ## git
@@ -54,15 +66,17 @@ ln -s ~/dotfiles/git/.git_delta ~/
 ln -s ~/dotfiles/git/.gitignore_global ~/
 ```
 
-## asdf
+## mise
+
+昔はasdfを使っていたがmiseの方が便利になったのでmiseに移行した
 
 ```shell
-ln -s ~/dotfiles/asdf/.tool-versions ~/
+ln -s ~/dotfiles/asdf/.tool-versions ~
 ```
 
 ## vim
 
-`vim/`ディレクトリを参照
+`vim/`ディレクトリを参照して設定
 
 ## fish
 

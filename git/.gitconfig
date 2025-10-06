@@ -31,8 +31,5 @@ smudge = git-lfs smudge -- %f
 [interactive]
 diffFilter = delta --color-only
 
-[core]
-excludesFile = /Users/user/.gitignore_global
-
 [ghq]
-	root = ~/work/
+root = ~/work/repositories

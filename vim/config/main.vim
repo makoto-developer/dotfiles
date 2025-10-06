@@ -18,6 +18,7 @@ set fileformats=unix,dos,mac
 set ambiwidth=double
 set nobomb
 set t_Co=256
+lang en_US.UTF-8
 
 
 

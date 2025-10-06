@@ -3,3 +3,5 @@ autocrlf = false
 quotepath = false
 editor = vim
 pager = delta
+excludesFile = /Users/user/.gitignore_global
+

@@ -7,9 +7,9 @@ export HISTSIZE=10000            # increase history size (default is 500)
 # ensure synchronization between bash memory and history file
 #export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
 
-bind \cr hstr
-if bind -M insert >/dev/null ^/dev/null
-  bind -M insert \cr hstr
-end
+# bind \cr hstr
+#if bind -M insert >/dev/null ^/dev/null
+  bind -M insert \cr hstr --
+#end
 
 

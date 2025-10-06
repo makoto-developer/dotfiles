@@ -2,23 +2,18 @@
 # `git config --list | grep alias`でaliasの一覧が確認できる
 
 [alias]
-a = add
 ad = add
 s = status
 ss = stash
 ssu = stash -u
 sst = status -uno
-f = fetch
 df = diff
 dfw = diff --word-diff
 dfn = diff --name-only
 cm = commit
 b = branch
-pl = pull
 co = checkout
 cp = cherry-pick
-cl = clone
-re = rebase
 unstage = reset HEAD
 uns = unstage
 clear = clean -df
@@ -30,7 +25,7 @@ bname = branchname
 ## マージ済みのブランチを削除
 delete-merged-branch = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|master|main'|xargs git branch -d; };f"
 dmbranch = delete-merged-branch
-## 追加の変更を最新のコミットに追加する
+## 追加の変更を最後のコミットに追加する
 fixit = commit --amend --no-edit
 
 # graph系
@@ -47,4 +42,4 @@ lg = log --decorate --oneline --graph
 # その他
 ## 特定のコミットログのファイル名のみを表示
 getFileNameOnly = "!getFileNameOnly () { show --name-only --pretty="" $1;};getFileNameOnly"
-lf = getFileNameOnly
+gfno = getFileNameOnly
