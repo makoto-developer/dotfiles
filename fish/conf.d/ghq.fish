@@ -6,6 +6,7 @@ function ghq_fzf_repo -d 'Repository search'
 end
 
 
+# Ctrl + gでリポジトリを検索
 if bind -M insert >/dev/null 2>/dev/null
     bind -M insert \cg '__ghq_repository_search'
 end

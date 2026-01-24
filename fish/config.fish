@@ -1,3 +1,6 @@
+# Claude Code config directory
+set -gx CLAUDE_CONFIG_DIR "$HOME/.config/claude"
+
 if status is-interactive
     #view
     set -g fish_prompt_pwd_dir_length 0 # プロンプトのディレクトリ名を省略させない

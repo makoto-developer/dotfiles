@@ -22,4 +22,5 @@ alias ls='ls -G'
 # password generater
 alias passgen='openssl rand -base64 16 | pbcopy'
 alias passgenweak='openssl rand -hex 8 | pbcopy'
-alias passgenw=passgenweak
+alias passgen2='cat /dev/urandom | base64 | fold -w 16 | head -n 1'
+

@@ -21,3 +21,4 @@ hi Visual ctermfg=Black
 
 " 検索結果のハイライトを消去
 nnoremap <Esc><Esc> <ESC>:nohlsearch<CR><ESC>
+set ideajoin

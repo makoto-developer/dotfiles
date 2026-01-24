@@ -150,6 +150,7 @@ inoremap {<Enter> {}<Left><CR><ESC><S-o>
 inoremap [<Enter> []<Left><CR><ESC><S-o>
 inoremap (<Enter> ()<Left><CR><ESC><S-o>
 
+
 " クオーテーションの補完
 inoremap ' ''<LEFT>
 inoremap " ""<LEFT>
@@ -173,8 +174,13 @@ set virtualedit=onemore
 set whichwrap=b,s,h,l,<,>,[,],~
 " ウィンドウの移動
 nnoremap sj <C-w>j
-nnoremap sk <C-w>k
+nnoremap sk <C-wk
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
+" 画面を分割
 nnoremap ss :<C-u>sp<CR><C-w>j
 nnoremap sv :<C-u>vs<CR><C-w>l
+nnoremap st :<C-u>tabnew<CR>
+nnoremap sn gt
+nnoremap sp gT
+nnoremap sq :<C-u>q<CR>
