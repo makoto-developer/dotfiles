@@ -133,6 +133,20 @@ pip3 install --user pynvim
 | `Esc Esc` | 検索ハイライトクリア |
 | `jj`（挿入モード） | Escapeモード |
 
+### 便利なマクロ・キーバインド
+
+`vim/config/macro.vim` に多数の便利なマクロが設定されています。
+
+**主な機能:**
+- `\cl` - console.log挿入（JavaScript/TypeScript）
+- `<Space>y` - 行複製
+- `\s` - カーソル下の単語を置換
+- `\fp` - ファイルパスをコピー
+- `\dt` - 日付挿入
+- その他多数...
+
+**詳細は [MACRO_GUIDE.md](./MACRO_GUIDE.md) を参照してください。**
+
 ---
 
 ## 📚 プラグイン（Neovim）
@@ -315,6 +329,7 @@ nvim +Tutor
 
 ## 🔗 関連ファイル
 
+- **[MACRO_GUIDE.md](./MACRO_GUIDE.md)** - マクロ・キーバインド完全ガイド 🎯
 - [nvim/README.md](./nvim/README.md) - Neovim詳細ガイド
 - [nvim/RECOMMENDATIONS.md](./nvim/RECOMMENDATIONS.md) - プラグイン提案
 - [../vscode/README.md](../vscode/README.md) - VSCode Vim設定

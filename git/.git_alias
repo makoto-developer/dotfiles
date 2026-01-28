@@ -18,7 +18,7 @@ unstage = reset HEAD
 uns = unstage
 clear = clean -df
 
-# 便利ワザ集
+# 便利ワザ
 ## 現在のブランチ名を取得
 branch-name = !"git rev-parse --abbrev-ref HEAD|tr -d \\\\r\\\\n"
 bname = branchname

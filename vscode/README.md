@@ -4,44 +4,112 @@ VSCodeでVimを使用する際の設定ファイルです。
 
 ## セットアップ
 
-### 1. 拡張機能のインストール
+### 方法1: 自動セットアップ（推奨）
+
+**最も簡単な方法です。**
+
+```bash
+# このディレクトリに移動
+cd ~/dotfiles/vscode
+
+# セットアップスクリプトを実行
+./setup.sh
+```
+
+スクリプトが以下を自動で行います：
+- 既存設定のバックアップ
+- シンボリックリンクの作成
+- 拡張機能のインストール（オプション）
+
+### 方法2: 手動セットアップ
+
+#### 1. 拡張機能のインストール
 
 ```bash
 code --install-extension vscodevim.vim
 code --install-extension esbenp.prettier-vscode
 ```
 
-### 2. 設定ファイルのコピー
+#### 2. シンボリックリンクの作成
 
-#### macOS/Linux
+**macOS/Linux:**
 
 ```bash
-# VSCodeのユーザー設定ディレクトリにコピー
-cp settings.json ~/Library/Application\ Support/Code/User/settings.json
+# 既存設定のバックアップ（必要に応じて）
+mv ~/Library/Application\ Support/Code/User/settings.json \
+   ~/Library/Application\ Support/Code/User/settings.json.backup
 
-# または、既存の設定とマージする場合
-cat settings.json >> ~/Library/Application\ Support/Code/User/settings.json
+# シンボリックリンクを作成
+ln -sf ~/dotfiles/vscode/settings.json \
+       ~/Library/Application\ Support/Code/User/settings.json
+
+# 確認
+ls -la ~/Library/Application\ Support/Code/User/settings.json
 ```
 
-#### Windows
+**Windows (PowerShell管理者権限):**
 
 ```powershell
-# VSCodeのユーザー設定ディレクトリにコピー
-Copy-Item settings.json $env:APPDATA\Code\User\settings.json
+# 既存設定のバックアップ
+Move-Item "$env:APPDATA\Code\User\settings.json" `
+          "$env:APPDATA\Code\User\settings.json.backup"
 
-# または、既存の設定とマージする場合
-Get-Content settings.json | Add-Content $env:APPDATA\Code\User\settings.json
+# シンボリックリンクを作成
+New-Item -ItemType SymbolicLink `
+         -Path "$env:APPDATA\Code\User\settings.json" `
+         -Target "$HOME\dotfiles\vscode\settings.json"
+
+# 確認
+Get-Item "$env:APPDATA\Code\User\settings.json"
 ```
 
-### 3. シンボリックリンクでの管理（推奨）
+**重要:** シンボリックリンクを使うことで、このdotfilesディレクトリで設定を一元管理できます。
+設定変更は自動的にVSCodeに反映され、Gitで管理できます。
+
+---
+
+## 複数端末での設定共有
+
+### 新しい端末へのセットアップ
 
 ```bash
-# macOS/Linux
-ln -sf $(pwd)/settings.json ~/Library/Application\ Support/Code/User/settings.json
+# 1. dotfilesリポジトリをクローン
+git clone git@github.com:makoto-developer/dotfiles.git ~/dotfiles
 
-# Windows (管理者権限が必要)
-New-Item -ItemType SymbolicLink -Path "$env:APPDATA\Code\User\settings.json" -Target "$(pwd)\settings.json"
+# 2. VSCodeをインストール（未インストールの場合）
+brew install --cask visual-studio-code
+
+# 3. セットアップスクリプトを実行
+cd ~/dotfiles/vscode
+./setup.sh
+
+# 4. 完了！
 ```
+
+### 設定の更新フロー
+
+**端末Aで設定を変更:**
+
+```bash
+# VSCodeで設定を変更すると、dotfiles/vscode/settings.json が自動更新される
+# （シンボリックリンクのため）
+
+cd ~/dotfiles
+git add vscode/settings.json
+git commit -m "Update VSCode settings"
+git push
+```
+
+**端末Bで設定を同期:**
+
+```bash
+cd ~/dotfiles
+git pull
+# シンボリックリンクなので自動的に反映される
+# VSCodeを再起動すれば設定が適用される
+```
+
+---
 
 ## 主な機能
 
@@ -146,7 +214,32 @@ Vimのキーバインドを優先するための設定です。
 2. `Preferences: Open Keyboard Shortcuts (JSON)` で確認
 3. 必要に応じて `keybindings.json` で上書き
 
+---
+
+## 🔗 関連ファイル
+
+- **[MIGRATION.md](./MIGRATION.md)** - シンボリックリンクへの移行手順
+- **[SETUP.md](./SETUP.md)** - 複数端末での設定共有の詳細ガイド
+- [extensions.txt](./extensions.txt) - インストール済み拡張機能リスト
+- [setup.sh](./setup.sh) - 自動セットアップスクリプト
+
+---
+
 ## 参考
 
 - [VSCodeVim Documentation](https://github.com/VSCodeVim/Vim)
 - [VSCode Key Bindings](https://code.visualstudio.com/docs/getstarted/keybindings)
+- [VSCode Settings Sync](https://code.visualstudio.com/docs/editor/settings-sync)
+
+---
+
+## まとめ
+
+このdotfilesリポジトリを使えば：
+
+✅ VSCode設定が1コマンドでセットアップ完了
+✅ 複数端末で設定を自動同期
+✅ シンボリックリンクで一元管理
+✅ Git管理で変更履歴を追跡
+
+まずは `./setup.sh` を実行して始めましょう！
