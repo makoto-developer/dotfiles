@@ -154,25 +154,17 @@ hook_add = '''
   autocmd FileType python setlocal commentstring=#\ %s
 '''
 
-# Kanagawa カラースキーム - 和風テーマ
+# Gruvbox カラースキーム
 [[plugins]]
-repo = 'rebelot/kanagawa.nvim'
+repo = 'morhetz/gruvbox'
 hook_add = '''
   augroup SetColorScheme
     au!
-    au VimEnter * nested colorscheme kanagawa
-    " 通常の文字を真っ白にカスタマイズ
-    au VimEnter * highlight Normal guifg=#FFFFFF
-    au VimEnter * highlight Identifier guifg=#FFFFFF
-    au VimEnter * highlight Function guifg=#FFFFFF
-    au VimEnter * highlight Variable guifg=#FFFFFF
-    au VimEnter * highlight Constant guifg=#FFFFFF
+    au VimEnter * nested colorscheme gruvbox
   augroup END
-  let g:kanagawa_transparent = 0
-  let g:kanagawa_dimInactive = 0
-  let g:kanagawa_commentStyle = { "italic": v:true }
-  let g:kanagawa_functionStyle = { "italic": v:false }
-  let g:kanagawa_keywordStyle = { "italic": v:false, "bold": v:true }
+  set background=dark
+  let g:gruvbox_contrast_dark = 'medium'
+  let g:gruvbox_italic = 1
 '''
 
 # Airline ステータスライン
@@ -190,7 +182,7 @@ hook_add = '''
 [[plugins]]
 repo = 'vim-airline/vim-airline-themes'
 hook_add = '''
-  let g:airline_theme='base16_gruvbox_dark_hard'
+  let g:airline_theme='gruvbox'
 '''
 
 # Rainbow Parentheses 括弧の色分け

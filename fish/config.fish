@@ -9,3 +9,6 @@ if status is-interactive
     # vim
     mkdir -p ~/.vim/undo
 end
+
+# Claude Code LSP Tool (900倍高速化)
+set -Ux ENABLE_LSP_TOOL 1

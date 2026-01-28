@@ -88,6 +88,7 @@
   // ESLint設定
   // ========================================
   "eslint.enable": true,
+  "eslint.autoFixOnSave": true,
   "eslint.filetypes": [
     "javascript",
     "typescript",
@@ -144,9 +145,5 @@
       "args": ["--stdio"],
       "filetypes": ["dockerfile"]
     }
-  },
-  "snippets.ultisnips.pythonPrompt": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
   }
 }

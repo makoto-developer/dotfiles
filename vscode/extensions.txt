@@ -1,0 +1,10 @@
+vscodevim.vim
+esbenp.prettier-vscode
+ms-vscode.vscode-typescript-next
+golang.go
+ms-python.python
+rust-lang.rust-analyzer
+hashicorp.terraform
+redhat.vscode-yaml
+eamodio.gitlens
+ms-azuretools.vscode-docker

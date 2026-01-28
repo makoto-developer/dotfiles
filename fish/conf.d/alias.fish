@@ -24,3 +24,6 @@ alias passgen='openssl rand -base64 16 | pbcopy'
 alias passgenweak='openssl rand -hex 8 | pbcopy'
 alias passgen2='cat /dev/urandom | base64 | fold -w 16 | head -n 1'
 
+# Git
+alias g='git'
+
