@@ -1,12 +1,12 @@
-[[plugins]]
-# deoplete
-repo = 'Shougo/deoplete.nvim'
-hook_add = '''
-  source ~/.config/nvim/plugins/lazy/deoplete.vim
-'''
-hook_post_source = '''
-    let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-3.8/lib/libclang-3.8.so.1'
-    let g:deoplete#sources#clang#clang_header = '/usr/include/clang'
-    let g:deoplete#enable_at_startup = 1
-'''
+# [[plugins]]
+# # deoplete (無効化: CoCと競合)
+# repo = 'Shougo/deoplete.nvim'
+# hook_add = '''
+#   source ~/.config/nvim/plugins/lazy/deoplete.vim
+# '''
+# hook_post_source = '''
+#     let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-3.8/lib/libclang-3.8.so.1'
+#     let g:deoplete#sources#clang#clang_header = '/usr/include/clang'
+#     let g:deoplete#enable_at_startup = 1
+# '''
 

@@ -5,11 +5,11 @@ repo = 'Shougo/dein.vim'
 [[plugins]]
 repo = 'tpope/vim-surround'
 
-# [[plugins]]
-# repo = 'Shougo/denite.nvim'
-# hook_add = '''
-#   source ~/.config/nvim/plugins/denite.vim
-# '''
+[[plugins]]
+repo = 'Shougo/denite.nvim'
+hook_add = '''
+  source ~/.config/nvim/plugins/denite.vim
+'''
 
 [[plugins]]
 repo = 'osyo-manga/vim-anzu'
@@ -48,12 +48,9 @@ hook_add = '''
   source ~/.config/nvim/plugins/fzf.vim
 '''
 
-# マルチカーソル（vim-visual-multi） - IntelliJ風
+# マルチカーソル intellijでいうctrl + g
 [[plugins]]
-repo = 'mg979/vim-visual-multi'
-hook_add = '''
-  " 設定はinit.vimで実施済み
-'''
+repo = 'terryma/vim-multiple-cursors'
 
 # ========================================
 # 推奨追加プラグイン
@@ -123,6 +120,7 @@ hook_add = '''
         \ 'coc-prettier',
         \ 'coc-eslint',
         \ 'coc-snippets',
+        \ 'coc-elixir',
         \ ]
 '''
 
@@ -161,19 +159,21 @@ hook_add = '''
 [[plugins]]
 repo = 'rebelot/kanagawa.nvim'
 hook_add = '''
+  augroup SetColorScheme
+    au!
+    au VimEnter * nested colorscheme kanagawa
+    " 通常の文字を真っ白にカスタマイズ
+    au VimEnter * highlight Normal guifg=#FFFFFF
+    au VimEnter * highlight Identifier guifg=#FFFFFF
+    au VimEnter * highlight Function guifg=#FFFFFF
+    au VimEnter * highlight Variable guifg=#FFFFFF
+    au VimEnter * highlight Constant guifg=#FFFFFF
+  augroup END
   let g:kanagawa_transparent = 0
   let g:kanagawa_dimInactive = 0
   let g:kanagawa_commentStyle = { "italic": v:true }
   let g:kanagawa_functionStyle = { "italic": v:false }
   let g:kanagawa_keywordStyle = { "italic": v:false, "bold": v:true }
-'''
-hook_post_source = '''
-  colorscheme kanagawa
-  highlight Normal guifg=#FFFFFF
-  highlight Identifier guifg=#FFFFFF
-  highlight Function guifg=#FFFFFF
-  highlight Variable guifg=#FFFFFF
-  highlight Constant guifg=#FFFFFF
 '''
 
 # Airline ステータスライン
@@ -198,11 +198,12 @@ hook_add = '''
 [[plugins]]
 repo = 'junegunn/rainbow_parentheses.vim'
 hook_add = '''
+  augroup rainbow_parentheses
+    au!
+    au VimEnter * RainbowParentheses
+  augroup END
   let g:rainbow#max_level = 16
   let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
-'''
-hook_post_source = '''
-  RainbowParentheses
 '''
 
 # Floaterm フローティングターミナル

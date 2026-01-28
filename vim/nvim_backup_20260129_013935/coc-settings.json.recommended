@@ -88,6 +88,7 @@
   // ESLint設定
   // ========================================
   "eslint.enable": true,
+  "eslint.autoFixOnSave": true,
   "eslint.filetypes": [
     "javascript",
     "typescript",
@@ -133,7 +134,7 @@
   "languageserver": {
     // Bash Language Server
     "bash": {
-      "command": "/Users/user/.local/share/mise/installs/node/24.9.0/bin/bash-language-server",
+      "command": "bash-language-server",
       "args": ["start"],
       "filetypes": ["sh"],
       "ignoredRootPaths": ["~"]
@@ -143,35 +144,6 @@
       "command": "docker-langserver",
       "args": ["--stdio"],
       "filetypes": ["dockerfile"]
-    },
-    // Elixir Language Server
-    "elixirLS": {
-      "command": "/usr/local/Cellar/elixir-ls/0.30.0/libexec/language_server.sh",
-      "filetypes": ["elixir", "eelixir", "heex"],
-      "rootPatterns": ["mix.exs"]
-    },
-    // Go Language Server
-    "golang": {
-      "command": "/Users/user/.local/share/mise/installs/go/1.25.1/bin/gopls",
-      "rootPatterns": ["go.mod", ".git/", ".vim/"],
-      "filetypes": ["go"]
-    },
-    // TypeScript/JavaScript Language Server
-    "tsserver": {
-      "command": "/Users/user/.local/share/mise/installs/node/24.9.0/bin/typescript-language-server",
-      "args": ["--stdio"],
-      "filetypes": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-      "rootPatterns": ["package.json", "tsconfig.json", "jsconfig.json", ".git"]
-    },
-    // Rust Language Server
-    "rust": {
-      "command": "/Users/user/.cargo/bin/rust-analyzer",
-      "filetypes": ["rust"],
-      "rootPatterns": ["Cargo.toml"]
     }
-  },
-  "snippets.ultisnips.pythonPrompt": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
   }
 }

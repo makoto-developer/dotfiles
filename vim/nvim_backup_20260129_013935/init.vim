@@ -20,19 +20,6 @@ if &runtimepath !~# '/dein.vim'
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" vim-visual-multi settings (must be set before plugin load)
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:VM_maps = {}
-let g:VM_maps['Find Under']         = '<C-g>'
-let g:VM_maps['Find Subword Under'] = '<C-g>'
-let g:VM_maps["Select All"]         = '<C-S-g>'
-let g:VM_maps["Skip Region"]        = '<C-x>'
-let g:VM_maps["Remove Region"]      = '<C-p>'
-let g:VM_maps["Visual Cursors"]     = '<C-g>'
-let g:VM_theme = 'iceblue'
-let g:VM_highlight_matches = 'underline'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " load plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let s:dein_dir = expand('~/.cache/dein')
@@ -67,14 +54,13 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDTreeを自動的に起動する
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" プラグイン読み込み後に実行
-augroup NERDTreeAuto
-  autocmd!
-  autocmd VimEnter * if exists(':NERDTree') && (argc() == 0 || (argc() == 1 && isdirectory(argv()[0]))) | NERDTree | endif
-  autocmd VimEnter * if exists(':NERDTree') && argc() > 0 && !isdirectory(argv()[0]) | NERDTree | wincmd p | endif
-  " NERDTree以外のバッファを閉じると自動でNERDTreeも閉じる
-  autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree() | q | endif
-augroup END
+if argc() == 0 || argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in")
+    autocmd vimenter * NERDTree
+else
+    autocmd vimenter * NERDTree | wincmd p
+endif
+" NERDTree以外のバッファを閉じると自動でNERDTreeも閉じる
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " 隠しディレクトリを表示
 let NERDTreeShowHidden = 1
 

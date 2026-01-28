@@ -144,11 +144,11 @@
       "args": ["--stdio"],
       "filetypes": ["dockerfile"]
     },
-    // Elixir Language Server
-    "elixirLS": {
-      "command": "/usr/local/Cellar/elixir-ls/0.30.0/libexec/language_server.sh",
-      "filetypes": ["elixir", "eelixir", "heex"],
-      "rootPatterns": ["mix.exs"]
+    // Elixir Language Server (Phoenix対応)
+    "elixir": {
+      "command": "/usr/local/bin/elixir-ls",
+      "filetypes": ["elixir", "eelixir", "heex", "surface"],
+      "rootPatterns": ["mix.exs", ".git/"]
     },
     // Go Language Server
     "golang": {
