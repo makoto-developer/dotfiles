@@ -184,3 +184,17 @@ nnoremap st :<C-u>tabnew<CR>
 nnoremap sn gt
 nnoremap sp gT
 nnoremap sq :<C-u>q<CR>
+
+
+"****************************************************************
+" 日本語入力（IME）設定
+"****************************************************************
+" IMEの状態をリセット
+set iminsert=0
+set imsearch=0
+" タイムアウト設定（キー入力の反応を改善）
+set ttimeoutlen=50
+" IME状態の保存を無効化
+set noimcmdline
+" インサートモード終了時にIMEをオフ
+autocmd InsertLeave * set iminsert=0
