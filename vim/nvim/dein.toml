@@ -123,6 +123,8 @@ hook_add = '''
         \ 'coc-prettier',
         \ 'coc-eslint',
         \ 'coc-snippets',
+        \ 'coc-go',
+        \ 'coc-rust-analyzer',
         \ ]
 '''
 
@@ -157,23 +159,54 @@ hook_add = '''
   autocmd FileType python setlocal commentstring=#\ %s
 '''
 
+# Gruvbox カラースキーム - 確実に動作するバックアップ
+[[plugins]]
+repo = 'morhetz/gruvbox'
+hook_add = '''
+  let g:gruvbox_contrast_dark = 'medium'
+  let g:gruvbox_italic = 1
+'''
+
 # Kanagawa カラースキーム - 和風テーマ
 [[plugins]]
 repo = 'rebelot/kanagawa.nvim'
 hook_add = '''
-  let g:kanagawa_transparent = 0
-  let g:kanagawa_dimInactive = 0
-  let g:kanagawa_commentStyle = { "italic": v:true }
-  let g:kanagawa_functionStyle = { "italic": v:false }
-  let g:kanagawa_keywordStyle = { "italic": v:false, "bold": v:true }
+  " termguicolorsを確実に有効化
+  if has('termguicolors')
+    set termguicolors
+  endif
 '''
 hook_post_source = '''
-  colorscheme kanagawa
-  highlight Normal guifg=#FFFFFF
-  highlight Identifier guifg=#FFFFFF
-  highlight Function guifg=#FFFFFF
-  highlight Variable guifg=#FFFFFF
-  highlight Constant guifg=#FFFFFF
+  " Kanagawaを読み込む前にシンタックスを有効化
+  syntax on
+
+  " Kanagawaカラースキームを設定
+  try
+    colorscheme kanagawa
+  catch
+    " Kanagawaが読み込めない場合はデフォルトカラースキームを使用
+    colorscheme desert
+  endtry
+
+  " シンタックスを再度有効化（カラースキーム読み込み後）
+  syntax on
+
+  " Elixir固有のシンタックスグループのハイライトを設定
+  augroup ElixirSyntaxHighlight
+    autocmd!
+    autocmd FileType elixir,eelixir highlight link elixirModuleDefine Keyword
+    autocmd FileType elixir,eelixir highlight link elixirDefine Keyword
+    autocmd FileType elixir,eelixir highlight link elixirPrivateDefine Keyword
+    autocmd FileType elixir,eelixir highlight link elixirKeyword Keyword
+    autocmd FileType elixir,eelixir highlight link elixirAtom Constant
+    autocmd FileType elixir,eelixir highlight link elixirString String
+    autocmd FileType elixir,eelixir highlight link elixirStringDelimiter String
+    autocmd FileType elixir,eelixir highlight link elixirInterpolation Special
+    autocmd FileType elixir,eelixir highlight link elixirInterpolationDelimiter Special
+    autocmd FileType elixir,eelixir highlight link elixirDocString Comment
+    autocmd FileType elixir,eelixir highlight link elixirAlias Type
+    autocmd FileType elixir,eelixir highlight link elixirModule Type
+  augroup END
 '''
 
 # Airline ステータスライン
@@ -202,7 +235,10 @@ hook_add = '''
   let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 '''
 hook_post_source = '''
-  RainbowParentheses
+  " RainbowParenthesesコマンドが存在する場合のみ実行
+  if exists(':RainbowParentheses')
+    RainbowParentheses
+  endif
 '''
 
 # Floaterm フローティングターミナル
@@ -280,23 +316,200 @@ hook_add = '''
 # Elixir 基本シンタックス
 [[plugins]]
 repo = 'elixir-editors/vim-elixir'
-on_ft = ['elixir', 'eelixir', 'heex', 'surface']
+# 遅延ロードを無効化してシンタックスを確実に読み込む
 hook_add = '''
-  " .heex ファイルを eelixir として認識
-  au BufRead,BufNewFile *.heex set filetype=eelixir
-  " .leex ファイルを eelixir として認識
-  au BufRead,BufNewFile *.leex set filetype=eelixir
-  " .sface ファイルを surface として認識
-  au BufRead,BufNewFile *.sface set filetype=surface
+  " Elixirシンタックスハイライト設定
+  let g:elixir_maxmatchprio = 10
+  let g:elixir_indent_max_lookbehind = 30
+
+  " より詳細なシンタックスハイライトを有効化
+  let g:elixir_use_markdown_for_docs = 1
+'''
+hook_post_source = '''
+  " Elixir追加ハイライト
+  augroup ElixirEnhancedHighlight
+    autocmd!
+    autocmd FileType elixir,eelixir syn match elixirFunctionCall /\<\h\w*\ze(/
+    autocmd FileType elixir,eelixir syn match elixirModuleName /\<[A-Z]\w*\(\.[A-Z]\w*\)*/
+    autocmd FileType elixir,eelixir highlight link elixirFunctionCall Function
+    autocmd FileType elixir,eelixir highlight link elixirModuleName Type
+  augroup END
 '''
 
 # Mix フォーマッター統合
 [[plugins]]
 repo = 'mhinz/vim-mix-format'
-on_ft = ['elixir', 'eelixir']
 hook_add = '''
-  " 保存時に自動フォーマット
+  " 保存時に自動フォーマット（Elixirファイルのみ）
   let g:mix_format_on_save = 1
   " フォーマッターのオプション
   let g:mix_format_options = '--check-equivalent'
+  " Phoenixテンプレートでもフォーマット実行
+  let g:mix_format_silent_errors = 1
 '''
+
+# Phoenix LiveViewテンプレート強化シンタックス
+[[plugins]]
+repo = 'mmorearty/elixir-ctags'
+hook_add = '''
+  " ctagsサポートでElixirの定義ジャンプを改善
+'''
+
+# Treesitter - 高度なシンタックスハイライト
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+build = ':TSUpdate'
+hook_add = '''
+  " Treesitter設定はLuaで記述
+'''
+hook_post_source = '''
+lua << EOF
+require('nvim-treesitter.configs').setup {
+  -- インストールする言語
+  ensure_installed = {
+    "elixir",
+    "heex",
+    "eex",
+    "go",
+    "rust",
+    "typescript",
+    "tsx",
+    "javascript",
+    "html",
+    "css",
+    "json",
+    "yaml",
+    "terraform",
+    "hcl",
+    "markdown"
+  },
+
+  -- 自動インストール
+  auto_install = true,
+
+  -- シンタックスハイライト
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+
+  -- インデント
+  indent = {
+    enable = true,
+  },
+
+  -- セマンティックハイライト強化
+  incremental_selection = {
+    enable = true,
+  },
+}
+EOF
+'''
+
+# ========================================
+# Go サポート
+# ========================================
+
+# Go シンタックス & ツール統合
+[[plugins]]
+repo = 'fatih/vim-go'
+on_ft = ['go']
+hook_add = '''
+  " GoはCoCとrust-analyzerを使うので、vim-goの重複機能を無効化
+  let g:go_def_mapping_enabled = 0
+  let g:go_code_completion_enabled = 0
+  let g:go_gopls_enabled = 0
+
+  " ハイライト設定
+  let g:go_highlight_functions = 1
+  let g:go_highlight_methods = 1
+  let g:go_highlight_structs = 1
+  let g:go_highlight_operators = 1
+  let g:go_highlight_build_constraints = 1
+  let g:go_highlight_extra_types = 1
+  let g:go_highlight_fields = 1
+  let g:go_highlight_types = 1
+  let g:go_highlight_function_calls = 1
+  let g:go_highlight_variable_declarations = 1
+  let g:go_highlight_variable_assignments = 1
+
+  " 自動保存時にimportsを整理（CoC経由で実行）
+  let g:go_fmt_autosave = 0
+  let g:go_imports_autosave = 0
+'''
+
+# ========================================
+# Rust サポート
+# ========================================
+
+# Rust シンタックス
+[[plugins]]
+repo = 'rust-lang/rust.vim'
+on_ft = ['rust']
+hook_add = '''
+  " rust-analyzerを使うのでrustfmtの自動実行は無効化（CoC経由で実行）
+  let g:rustfmt_autosave = 0
+  let g:rust_recommended_style = 1
+'''
+
+# ========================================
+# Terraform サポート
+# ========================================
+
+# Terraform シンタックス & LSP
+[[plugins]]
+repo = 'hashivim/vim-terraform'
+on_ft = ['terraform', 'tf', 'hcl']
+hook_add = '''
+  " 保存時に自動フォーマット
+  let g:terraform_fmt_on_save = 1
+
+  " .tf と .tfvars ファイルを認識
+  au BufRead,BufNewFile *.tf set filetype=terraform
+  au BufRead,BufNewFile *.tfvars set filetype=terraform
+  au BufRead,BufNewFile *.hcl set filetype=hcl
+
+  " インデント設定
+  let g:terraform_align = 1
+'''
+
+# ========================================
+# Helm (Kubernetes) サポート
+# ========================================
+
+# Helm チャート テンプレート認識
+[[plugins]]
+repo = 'towolf/vim-helm'
+on_ft = ['helm', 'yaml']
+hook_add = '''
+  " Helmチャートファイルを認識
+  au BufRead,BufNewFile */templates/*.yaml set filetype=helm
+  au BufRead,BufNewFile */templates/*.tpl set filetype=helm
+'''
+
+# ========================================
+# TypeScript/React/Next.js サポート
+# ========================================
+
+# TypeScript シンタックス拡張
+[[plugins]]
+repo = 'HerringtonDarkholme/yats.vim'
+on_ft = ['typescript', 'typescriptreact']
+
+# JSX/TSX シンタックス
+[[plugins]]
+repo = 'maxmellon/vim-jsx-pretty'
+on_ft = ['javascript', 'javascriptreact', 'typescript', 'typescriptreact']
+hook_add = '''
+  let g:vim_jsx_pretty_colorful_config = 1
+'''
+
+# Styled Components シンタックス
+[[plugins]]
+repo = 'styled-components/vim-styled-components'
+on_ft = ['javascript', 'javascriptreact', 'typescript', 'typescriptreact']
+
+# GraphQL シンタックス（Next.jsでよく使う）
+[[plugins]]
+repo = 'jparise/vim-graphql'
+on_ft = ['graphql', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact']

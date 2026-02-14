@@ -5,16 +5,22 @@
   "coc.preferences.formatOnSaveFiletypes": [
     "python",
     "go",
+    "rust",
     "dart",
     "html",
     "javascript",
     "typescript",
+    "javascriptreact",
+    "typescriptreact",
     "css",
     "scss",
     "json",
     "graphql",
     "markdown",
-    "yaml"
+    "yaml",
+    "terraform",
+    "elixir",
+    "eelixir"
   ],
 
   // ========================================
@@ -46,8 +52,15 @@
   // TypeScript/JavaScript
   "typescript.format.enabled": true,
   "typescript.suggest.autoImports": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
   "javascript.format.enabled": true,
   "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+
+  // React/Next.js
+  "tsserver.enableJavascript": true,
+  "typescript.tsserver.pluginPaths": [],
 
   // Go
   "go.goplsOptions": {
@@ -73,6 +86,24 @@
   // YAML
   "yaml.format.enable": true,
   "yaml.validate": true,
+  "yaml.schemas": {
+    "kubernetes": "/*.yaml"
+  },
+
+  // Rust
+  "rust-analyzer.enable": true,
+  "rust-analyzer.server.path": "/Users/user/.cargo/bin/rust-analyzer",
+  "rust-analyzer.cargo.allFeatures": true,
+  "rust-analyzer.checkOnSave.command": "clippy",
+  "rust-analyzer.inlayHints.enable": true,
+
+  // Elixir
+  "elixir.pathToElixirLS": "/usr/local/Cellar/elixir-ls/0.30.0/libexec/language_server.sh",
+  "elixir.suggestSpecs": true,
+
+  // Terraform
+  "terraform.enable": true,
+  "terraform.languageServer.enable": true,
 
   // ========================================
   // Prettier設定
@@ -168,6 +199,36 @@
       "command": "/Users/user/.cargo/bin/rust-analyzer",
       "filetypes": ["rust"],
       "rootPatterns": ["Cargo.toml"]
+    },
+    // Terraform Language Server
+    "terraform": {
+      "command": "/Users/user/.local/share/mise/installs/terraform-ls/latest/bin/terraform-ls",
+      "args": ["serve"],
+      "filetypes": ["terraform", "tf", "hcl"],
+      "initializationOptions": {},
+      "rootPatterns": [".terraform", ".git"]
+    },
+    // YAML Language Server (Helm対応)
+    "yamlls": {
+      "command": "yaml-language-server",
+      "args": ["--stdio"],
+      "filetypes": ["yaml", "helm"],
+      "initializationOptions": {
+        "yaml": {
+          "schemas": {
+            "kubernetes": "/*.yaml"
+          },
+          "format": {
+            "enable": true,
+            "singleQuote": false,
+            "bracketSpacing": true
+          },
+          "validate": true,
+          "hover": true,
+          "completion": true
+        }
+      },
+      "rootPatterns": [".git", "Chart.yaml"]
     }
   },
   "snippets.ultisnips.pythonPrompt": false,

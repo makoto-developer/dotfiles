@@ -98,8 +98,54 @@ nnoremap <silent> <c-n> *Ncgn
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " vim settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" True Color サポート（Kanagawaなどの高度なカラースキームに必要）
+if has('termguicolors')
+  set termguicolors
+endif
+
+" ファイルタイプ検出とプラグイン・インデントを有効化
+filetype plugin indent on
+
+" シンタックスハイライトを有効化
+syntax on
+
 " 行番号表示
 set nu
 " クリップボードを共有
 set clipboard+=unnamedplus
+
+" Elixir/Phoenix ファイルタイプの明示的な認識
+augroup ElixirFiletypes
+  autocmd!
+  autocmd BufRead,BufNewFile *.ex set filetype=elixir
+  autocmd BufRead,BufNewFile *.exs set filetype=elixir
+  autocmd BufRead,BufNewFile *.eex set filetype=eelixir
+  autocmd BufRead,BufNewFile *.heex set filetype=eelixir
+  autocmd BufRead,BufNewFile *.leex set filetype=eelixir
+  autocmd BufRead,BufNewFile mix.lock set filetype=elixir
+  " ファイルを開いた時に強制的にシンタックスを再読み込み
+  autocmd FileType elixir,eelixir syntax on
+  autocmd FileType elixir,eelixir setlocal syntax=ON
+augroup END
+
+" カラースキーム読み込み後もシンタックスを維持
+augroup PreserveElixirSyntax
+  autocmd!
+  autocmd ColorScheme * if &filetype ==# 'elixir' || &filetype ==# 'eelixir' | syntax on | endif
+augroup END
+
+" Treesitter用のハイライトグループ定義
+augroup TreesitterHighlights
+  autocmd!
+  " Elixir関数・変数のハイライト
+  autocmd FileType elixir,eelixir highlight link @function.call Function
+  autocmd FileType elixir,eelixir highlight link @function.method Function
+  autocmd FileType elixir,eelixir highlight link @variable Identifier
+  autocmd FileType elixir,eelixir highlight link @parameter Identifier
+  autocmd FileType elixir,eelixir highlight link @module Type
+  autocmd FileType elixir,eelixir highlight link @type Type
+  autocmd FileType elixir,eelixir highlight link @constant Constant
+  autocmd FileType elixir,eelixir highlight link @keyword.function Keyword
+  autocmd FileType elixir,eelixir highlight link @operator Operator
+augroup END
 
