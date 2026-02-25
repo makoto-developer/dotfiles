@@ -180,6 +180,12 @@ ln -sf ~/dotfiles/fish/conf.d ~/.config/fish/conf.d
 
 ### Version Manager
 
+**mise:**
+```bash
+ln -s ~/dotfiles/mise ~/.config/
+```
+
+**asdf (if you prefer asdf over mise):**
 ```bash
 ln -sf ~/dotfiles/asdf/.tool-versions ~/.tool-versions
 ```

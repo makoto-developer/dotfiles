@@ -113,6 +113,9 @@ syntax on
 set nu
 " クリップボードを共有
 set clipboard+=unnamedplus
+" アンダースコアなどの特殊文字を隠さない（conceal無効化）
+set conceallevel=0
+set concealcursor=
 
 " Elixir/Phoenix ファイルタイプの明示的な認識
 augroup ElixirFiletypes

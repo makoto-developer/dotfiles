@@ -1,0 +1,8 @@
+[tools]
+elixir = "1.19.5-otp-28"
+erlang = "28.3.1"
+pnpm = "latest"
+rust = "1.93.1"
+terraform = "latest"
+terraform-ls = "latest"
+tflint = "latest"
