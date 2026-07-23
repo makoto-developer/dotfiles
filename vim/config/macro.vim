@@ -80,10 +80,6 @@ nnoremap / /\v
 " 括弧ジャンプを簡単に
 nnoremap M %
 
-" 空行間の移動
-nnoremap <C-j> }
-nnoremap <C-k> {
-
 " バッファ移動
 nnoremap <silent> [b :bprevious<CR>
 nnoremap <silent> ]b :bnext<CR>
@@ -208,10 +204,6 @@ nnoremap <Leader>x :x<CR>
 " ============================================================
 " レジスタ・クリップボード
 " ============================================================
-
-" 0レジスタ（最後にyankした内容）から貼り付け
-nnoremap <Leader>p "0p
-nnoremap <Leader>P "0P
 
 " システムクリップボードへコピー
 xnoremap <Leader>y "+y

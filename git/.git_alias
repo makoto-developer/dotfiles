@@ -21,7 +21,7 @@ clear = clean -df
 # 便利ワザ
 ## 現在のブランチ名を取得
 branch-name = !"git rev-parse --abbrev-ref HEAD|tr -d \\\\r\\\\n"
-bname = branchname
+bname = branch-name
 ## マージ済みのブランチを削除
 delete-merged-branch = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|master|main'|xargs git branch -d; };f"
 dmbranch = delete-merged-branch
@@ -41,5 +41,5 @@ lg = log --decorate --oneline --graph
 
 # その他
 ## 特定のコミットログのファイル名のみを表示
-getFileNameOnly = "!getFileNameOnly () { show --name-only --pretty="" $1;};getFileNameOnly"
+getFileNameOnly = "!getFileNameOnly () { git show --name-only --pretty="" $1;};getFileNameOnly"
 gfno = getFileNameOnly

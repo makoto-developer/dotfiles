@@ -3,7 +3,7 @@
 "****************************************************************
 " シェルを指定
 "****************************************************************
-set shell=/usr/local/bin/fish
+set shell=/bin/zsh
 
 
 "****************************************************************
@@ -174,7 +174,7 @@ set virtualedit=onemore
 set whichwrap=b,s,h,l,<,>,[,],~
 " ウィンドウの移動
 nnoremap sj <C-w>j
-nnoremap sk <C-wk
+nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
 " 画面を分割

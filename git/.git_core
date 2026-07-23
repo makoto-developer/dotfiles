@@ -1,7 +1,7 @@
 [core]
 autocrlf = false
 quotepath = false
-editor = vim
+editor = nvim
 pager = delta
-excludesFile = /Users/user/.gitignore_global
+excludesFile = ~/.gitignore_global
 

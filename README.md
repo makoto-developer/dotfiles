@@ -1,167 +1,41 @@
 # dotfiles
 
-macOS development environment configuration files
+macOSの開発環境設定ファイル。設定はこのリポジトリで管理し、各所へsymlinkを張って使う。
 
----
+前提
 
-## ✨ Features
+- ツール類(ghq, fzf, mise, neovim等)は[pc-setup](https://github.com/makoto-developer/pc-setup)の手順でインストールする
+- ssh設定が済んでいること(cloneはssh経由のため)
 
-- 🐟 **Fish shell** configuration with useful aliases
-- 🎨 **Neovim** with LSP, plugins, and modern development tools
-- 💻 **VSCode** Vim mode configuration
-- 📝 **Git** configuration with delta diff viewer
-- 🔧 **Version management** with mise/asdf
-- 🚀 **One-command setup** with automated installation script
+## 1. リポジトリを取得
 
----
+リポジトリはghq管理下に置き、`~/dotfiles`はシンボリックリンクにする。
 
-## 🚀 Quick Start
+```shell
+# ghqのクローン先を設定(このdotfilesの.gitconfigにも同じ設定があるが、初回はまだ無いので手で設定する)
+git config --global ghq.root '~/work'
 
-### 1. Clone this repository
-
-```bash
-# Using ghq (recommended)
-ghq get https://github.com/makoto-developer/dotfiles.git
-ln -s ~/work/repositories/github.com/makoto-developer/dotfiles ~/dotfiles
-
-# Or clone directly
-cd ~
-git clone git@github.com:makoto-developer/dotfiles.git
+ghq get -p makoto-developer/dotfiles
+ln -s ~/work/github.com/makoto-developer/dotfiles ~/dotfiles
 ```
 
-### 2. Run the installation script
+## 2. Git設定
 
-```bash
-cd ~/dotfiles
-./install.sh
-```
-
-The script will guide you through:
-- Git configuration setup
-- Shell configuration (Fish/Zsh)
-- Version manager setup (mise/asdf)
-- Vim/Neovim setup
-- VSCode setup
-
-### 3. Restart your terminal
-
-```bash
-exec $SHELL
-```
-
----
-
-## 📁 Structure
-
-```
-dotfiles/
-├── README.md                 # This file
-├── IMPROVEMENTS.md           # Improvement suggestions
-├── install.sh               # Automated setup script ⭐
-│
-├── git/                     # Git configuration
-│   ├── .gitconfig
-│   ├── .git_alias
-│   ├── .git_core
-│   ├── .git_delta
-│   └── .gitignore_global
-│
-├── fish/                    # Fish shell configuration
-│   ├── config.fish
-│   ├── init.fish
-│   └── conf.d/              # Modular configurations
-│       ├── alias.fish
-│       ├── env.fish
-│       ├── git.fish
-│       └── ...
-│
-├── vim/                     # Vim/Neovim configuration
-│   ├── README.md            # Vim setup guide
-│   ├── .vimrc               # Standard Vim
-│   ├── .ideavimrc           # JetBrains IDEs
-│   ├── config/              # Vim configuration modules
-│   └── nvim/                # Neovim with plugins
-│       ├── README.md
-│       ├── RECOMMENDATIONS.md
-│       ├── setup.sh         # Neovim setup script
-│       ├── init.vim
-│       ├── dein.toml        # Plugin definitions
-│       └── coc-settings.json
-│
-├── vscode/                  # VSCode configuration
-│   ├── README.md
-│   ├── SETUP.md             # Multi-machine sync guide
-│   ├── setup.sh             # VSCode setup script
-│   ├── settings.json        # VSCode settings
-│   └── extensions.txt       # Extension list
-│
-├── zsh/                     # Zsh configuration (optional)
-│   ├── .zshrc
-│   └── ...
-│
-└── asdf/                    # Version manager
-    └── .tool-versions       # Language versions
-```
-
----
-
-## 📦 Prerequisites
-
-### Required
-
-- **macOS** (tested on macOS 14+)
-- **Git** (pre-installed on macOS)
-- **Homebrew** (package manager)
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-### Recommended
-
-```bash
-# Essential tools
-brew install fish neovim git-delta mise
-
-# Optional but useful
-brew install ripgrep fzf bat eza ghq
-
-# VSCode
-brew install --cask visual-studio-code
-```
-
----
-
-## ⚙️ Manual Setup
-
-If you prefer manual setup instead of using `install.sh`:
-
-### Git Configuration
-
-First, create personal git config files:
+まず個人用の設定ファイル`~/.git_user`を作る。
+(名前・メールアドレス・署名鍵はマシンやアカウントごとに違うため、リポジトリに含めずこのファイルに分離している)
 
 **~/.git_user:**
 ```
 [user]
 name = Your Name
 email = your.email@example.com
+# 署名付きコミット用。ssh設定で作った鍵の「公開鍵」を指定する
+signingkey = ~/.ssh/id_github_YYYYMMDD_ed25519.pub
 ```
 
-**~/.git_github:**
-```
-[github]
-user = "your-github-username"
-```
+次に設定ファイルをリンクする。
 
-**~/.git_globalignore:**
-```
-[core]
-excludesFile = /Users/yourname/.git_globalignore
-```
-
-Then link the configuration files:
-
-```bash
+```shell
 cd ~/dotfiles
 ln -sf $PWD/git/.gitconfig ~/.gitconfig
 ln -sf $PWD/git/.git_alias ~/.git_alias
@@ -170,268 +44,47 @@ ln -sf $PWD/git/.git_delta ~/.git_delta
 ln -sf $PWD/git/.gitignore_global ~/.gitignore_global
 ```
 
-### Fish Shell
+※署名付きコミットの共通設定(`gpg.format ssh`等)は`.gitconfig`に含まれている。GitHubへのSigning Key登録などの残り手順は[pc-setup](https://github.com/makoto-developer/pc-setup)の「署名付きコミットの設定」を参照。
 
-```bash
-ln -sf ~/dotfiles/fish/config.fish ~/.config/fish/config.fish
-ln -sf ~/dotfiles/fish/init.fish ~/.config/omf/init.fish
-ln -sf ~/dotfiles/fish/conf.d ~/.config/fish/conf.d
+## 3. シェル(Zsh)
+
+[zsh/README.md](./zsh/README.md)を参照。
+
+## 4. バージョン管理(mise)
+
+miseはグローバル設定を`~/.config/mise/config.toml`から読むため、このリンクは必須。
+
+```shell
+ln -sn ~/dotfiles/mise ~/.config/mise
+mise install
 ```
 
-### Version Manager
+## 5. Vim/Neovim
 
-**mise:**
-```bash
-ln -s ~/dotfiles/mise ~/.config/
-```
+[vim/README.md](./vim/README.md)を参照。
 
-**asdf (if you prefer asdf over mise):**
-```bash
-ln -sf ~/dotfiles/asdf/.tool-versions ~/.tool-versions
-```
+## 6. VSCode
 
-### Vim/Neovim
-
-See [vim/README.md](./vim/README.md) for detailed setup instructions.
-
-Quick setup:
-```bash
-cd ~/dotfiles/vim/nvim
-./setup.sh
-```
-
-### VSCode
-
-See [vscode/SETUP.md](./vscode/SETUP.md) for multi-machine setup guide.
-
-Quick setup:
-```bash
+```shell
 cd ~/dotfiles/vscode
 ./setup.sh
 ```
 
----
+詳細は[vscode/SETUP.md](./vscode/SETUP.md)を参照。
 
-## 🔄 Syncing Across Multiple Machines
+## 7. Karabiner-Elements
 
-### Setting up a new machine
+キーマッピング設定(fn⇔Esc入替、右Cmd→英数、右Opt→かな)。
+GUIでの設定変更がファイルを置き換えるため、ディレクトリごとsymlinkする。
 
-```bash
-# 1. Clone dotfiles
-git clone git@github.com:makoto-developer/dotfiles.git ~/dotfiles
-
-# 2. Run install script
-cd ~/dotfiles
-./install.sh
-
-# 3. Done! All configurations are symlinked
+```shell
+# 既存の設定があれば退避
+mv ~/.config/karabiner ~/.config/karabiner.bak 2>/dev/null
+ln -sn ~/dotfiles/karabiner ~/.config/karabiner
 ```
 
-### Updating configuration
+## 8. 反映
 
-**On machine A (after making changes):**
-```bash
-cd ~/dotfiles
-git add .
-git commit -m "Update configuration"
-git push
+```shell
+exec $SHELL
 ```
-
-**On machine B (to sync changes):**
-```bash
-cd ~/dotfiles
-git pull
-# Changes are automatically reflected via symlinks
-```
-
----
-
-## 🎯 Key Features
-
-### Fish Shell Aliases
-
-| Alias | Command | Description |
-|-------|---------|-------------|
-| `vi` | `nvim` | Use Neovim |
-| `l` | `ls -ltraG` | List files, newest last |
-| `..` | `cd ..` | Go up one directory |
-| `...` | `cd ../..` | Go up two directories |
-| `g` | `git` | Git shortcut |
-| `clip` | `pbcopy` | Copy to clipboard |
-| `pwgen` | Password generator | Generate secure password |
-
-See [fish/conf.d/alias.fish](./fish/conf.d/alias.fish) for complete list.
-
-### Git Configuration
-
-- 📊 **Delta** - Beautiful diffs with syntax highlighting
-- 🎨 **Aliases** - Convenient git shortcuts
-- 🔒 **Global ignore** - Ignore common system files
-- 🚀 **Auto setup remote** - Automatically set upstream on push
-
-### Neovim Features
-
-- 🔌 **LSP integration** via CoC
-- 🎨 **Syntax highlighting** with Treesitter
-- 📝 **Auto-completion**
-- 🔍 **Fuzzy finding** with fzf
-- 📊 **Git integration** with vim-fugitive
-- 🎨 **Beautiful theme** (Gruvbox)
-
-See [vim/nvim/RECOMMENDATIONS.md](./vim/nvim/RECOMMENDATIONS.md) for details.
-
-### VSCode Configuration
-
-- ⌨️ **Vim mode** with custom keybindings
-- 📋 **Clipboard integration** - `y` yanks to system clipboard
-- 🎨 **Consistent settings** across machines
-- 🔧 **Language-specific** configurations
-
-See [vscode/README.md](./vscode/README.md) for details.
-
----
-
-## 🐛 Troubleshooting
-
-### Symlinks not working
-
-```bash
-# Check if symlink exists
-ls -la ~/.gitconfig
-
-# If broken, remove and recreate
-unlink ~/.gitconfig
-ln -sf ~/dotfiles/git/.gitconfig ~/.gitconfig
-```
-
-### Git config not found
-
-Make sure you've created personal config files:
-- `~/.git_user`
-- `~/.git_github`
-- `~/.git_globalignore`
-
-See the [Git Configuration](#git-configuration) section above.
-
-### Neovim plugins not loading
-
-```bash
-# Reinstall plugins
-nvim
-:call dein#clear_state()
-:call dein#install()
-
-# Check health
-:checkhealth
-```
-
-### VSCode settings not syncing
-
-```bash
-# On macOS
-ls -la ~/Library/Application\ Support/Code/User/settings.json
-
-# Should show symlink to dotfiles/vscode/settings.json
-# If not, run setup again
-cd ~/dotfiles/vscode
-./setup.sh
-```
-
----
-
-## 📚 Documentation
-
-- [IMPROVEMENTS.md](./IMPROVEMENTS.md) - Improvement suggestions and best practices
-- [vim/README.md](./vim/README.md) - Vim/Neovim setup guide
-- [vim/nvim/RECOMMENDATIONS.md](./vim/nvim/RECOMMENDATIONS.md) - Plugin recommendations
-- [vscode/README.md](./vscode/README.md) - VSCode setup guide
-- [vscode/SETUP.md](./vscode/SETUP.md) - Multi-machine setup guide
-
----
-
-## 💡 Tips
-
-### Safely removing symlinks
-
-Use `unlink` instead of `rm` to avoid deleting the source files:
-
-```bash
-# ✅ Good
-unlink ~/.gitconfig
-
-# ❌ Bad - might delete source file
-rm ~/.gitconfig
-```
-
-### Update all tools
-
-```bash
-# Update Homebrew packages
-brew update && brew upgrade && brew cleanup
-
-# Update Neovim plugins
-nvim --headless "+call dein#update()" +qa
-
-# Update mise/asdf tools
-mise upgrade
-# or
-asdf plugin update --all
-```
-
-### Backup before changes
-
-```bash
-# The install script automatically creates backups
-# But you can manually backup:
-cp ~/.gitconfig ~/.gitconfig.backup.$(date +%Y%m%d)
-```
-
----
-
-## 🤝 Contributing
-
-Improvements and suggestions are welcome! See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for current improvement proposals.
-
----
-
-## 📄 License
-
-MIT License - feel free to use and modify
-
----
-
-## 🔗 Related Resources
-
-- [Awesome dotfiles](https://github.com/webpro/awesome-dotfiles)
-- [GitHub does dotfiles](https://dotfiles.github.io/)
-- [Fish shell documentation](https://fishshell.com/docs/current/)
-- [Neovim documentation](https://neovim.io/doc/)
-- [VSCodeVim](https://github.com/VSCodeVim/Vim)
-
----
-
-## ⚡ Quick Reference
-
-```bash
-# Initial setup
-git clone git@github.com:makoto-developer/dotfiles.git ~/dotfiles
-cd ~/dotfiles && ./install.sh
-
-# Update from remote
-cd ~/dotfiles && git pull
-
-# Edit configuration
-cd ~/dotfiles
-# Make changes to files
-git add .
-git commit -m "Update config"
-git push
-
-# Test setup
-cd ~/dotfiles
-./test.sh  # (if you create test script)
-```
-
----
-
-**Happy coding! 🚀**

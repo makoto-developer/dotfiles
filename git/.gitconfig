@@ -3,15 +3,13 @@ path = ~/.git_user
 
 [push]
 default = current
+autoSetupRemote = true
 
 [include]
 path = ~/.git_delta
 
 [include]
 path = ~/.git_core
-
-[include]
-path = ~/.git_globalignore
 
 [include]
 path = ~/.git_alias
@@ -21,6 +19,9 @@ defaultBranch = main
 
 [pull]
 rebase = false
+
+[fetch]
+prune = true
 
 [filter "lfs"]
 process = git-lfs filter-process
@@ -32,4 +33,18 @@ smudge = git-lfs smudge -- %f
 diffFilter = delta --color-only
 
 [ghq]
-root = ~/work/repositories
+root = ~/work
+
+# 署名付きコミット(SSH鍵で署名)
+# 鍵の指定(user.signingkey)はマシンごとに違うので~/.git_userに書く
+[gpg]
+format = ssh
+
+[gpg "ssh"]
+allowedSignersFile = ~/.ssh/allowed_signers
+
+[commit]
+gpgsign = true
+
+[tag]
+gpgsign = true

@@ -27,11 +27,10 @@ fi
 echo "VSCode User Directory: $VSCODE_USER_DIR"
 echo ""
 
-# VSCodeディレクトリが存在するか確認
+# VSCodeディレクトリが無ければ作成(インストール直後でまだ起動していない場合)
 if [ ! -d "$VSCODE_USER_DIR" ]; then
-    echo "⚠️  VSCode User directory not found."
-    echo "Please install VSCode first."
-    exit 1
+    echo "📁 VSCode User directory not found. Creating..."
+    mkdir -p "$VSCODE_USER_DIR"
 fi
 
 # バックアップ作成
@@ -73,26 +72,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "📦 Installing extensions..."
     echo ""
 
-    # 必須拡張機能
-    echo "Installing essential extensions..."
-    code --install-extension vscodevim.vim
-    code --install-extension esbenp.prettier-vscode
-
-    # 推奨拡張機能
-    echo ""
-    read -p "Install additional recommended extensions? (y/n) " -n 1 -r
-    echo ""
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "Installing additional extensions..."
-        code --install-extension ms-vscode.vscode-typescript-next
-        code --install-extension golang.go
-        code --install-extension ms-python.python
-        code --install-extension rust-lang.rust-analyzer
-        code --install-extension hashicorp.terraform
-        code --install-extension redhat.vscode-yaml
-        code --install-extension eamodio.gitlens
-        code --install-extension ms-azuretools.vscode-docker
-    fi
+    # 拡張機能の一覧はextensions.txtで管理(スクリプト内に二重管理しない)
+    while IFS= read -r extension; do
+        [ -z "$extension" ] && continue
+        code --install-extension "$extension"
+    done < "$SCRIPT_DIR/extensions.txt"
 
     echo ""
     echo "✅ Extensions installed!"

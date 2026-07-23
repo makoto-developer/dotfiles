@@ -1,178 +1,63 @@
-# Neovim Configuration
+# Neovim設定
 
-このディレクトリにはNeovimの設定ファイルが含まれています。
+`lazy.nvim` + 組み込みLSP + treesitterによる自己完結構成。
 
-## 📁 ファイル構成
+- プラグインマネージャ(lazy.nvim)は初回起動時に自動でインストールされる
+- LSPサーバ(Elixir/TypeScript/Go/Rust/Lua等)はMasonが自動でインストールする
+- **NodeもPythonも不要**(旧構成のdein/deoplete/CoCはすべて廃止)
 
-```
-nvim/
-├── init.vim                          # メイン設定ファイル
-├── dein.toml                         # 通常ロードプラグイン
-├── dein_lazy.toml                    # 遅延ロードプラグイン
-├── dein.toml.recommended             # 推奨プラグイン追加版（サンプル）
-├── coc-settings.json                 # CoC設定
-├── coc-settings.json.recommended     # CoC推奨設定（サンプル）
-├── RECOMMENDATIONS.md                # プラグイン・設定の詳細な提案
-├── config/
-│   ├── main.vim                      # 基本設定
-│   └── macro.vim                     # マクロ
-└── plugins/
-    └── ...                           # プラグイン別設定
+## セットアップ
+
+```shell
+# ripgrepはtelescopeの全文検索、tree-sitter-cliはtreesitterパーサのビルドで使用
+brew install neovim ripgrep tree-sitter-cli
+cd ~/dotfiles/vim/nvim
+./setup.sh                    # ~/.config/nvim へのsymlinkを張るだけ
+nvim                          # 初回起動で全部自動インストールされる
 ```
 
-## 🚀 クイックスタート
+動作確認
 
-### 1. 基本セットアップ
-
-```bash
-# nvimディレクトリを ~/.config にコピー
-cp -r nvim ~/.config/
-
-# nvimを起動（プラグインが自動インストールされる）
-nvim
+```
+:checkhealth
+:Lazy      " プラグインの状態
+:Mason     " LSPサーバの状態
 ```
 
-### 2. 推奨プラグインの導入
+## 構成ファイル
 
-詳細な提案は [RECOMMENDATIONS.md](./RECOMMENDATIONS.md) を参照してください。
+- `init.lua` — 設定はこの1ファイルのみ
+- `lazy-lock.json` — プラグインのバージョンロック(自動生成。コミットして環境間で揃える)
 
-最小限の推奨プラグインを導入する場合：
+## 主なキーマップ
 
-```bash
-# 推奨版のdein.tomlを使用
-cp dein.toml.recommended dein.toml
-
-# nvimを起動してプラグインをインストール
-nvim
-:call dein#install()
-
-# CoCエクステンションをインストール
-:CocInstall coc-tsserver coc-json coc-python coc-go coc-prettier
-```
-
-### 3. CoC設定の拡張
-
-```bash
-# 推奨版のcoc-settings.jsonを使用
-cp coc-settings.json.recommended coc-settings.json
-```
-
-## ⚙️ 主な機能
-
-### クリップボード共有
-
-- `set clipboard+=unnamedplus` により、`y`でヤンクした内容がシステムクリップボードにコピーされます
-- VSCodeと同様のクリップボード動作を実現
-
-### 基本設定
-
-- **エンコーディング**: UTF-8
-- **インデント**: 2スペース（Goは4スペース、タブ文字）
-- **Undo**: ファイルを閉じても復元可能（`~/.vim/undo` に保存）
-- **シェル**: fish
-- **行番号**: 表示
-- **検索**: インクリメンタルサーチ、大文字小文字を区別しない
-
-### ショートカット（init.vim）
+リーダーキーは`Space`。
 
 | キー | 動作 |
 |------|------|
-| `sn` | NERDTreeを開く |
-| `sf` | ファイル検索（fzf） |
-| `sw` | ウィンドウ一覧 |
-| `Ctrl+n` | 複数キーワード選択（IntelliJ風） |
-| `Ctrl+h/j/k/l` | ウィンドウ移動 |
-| `Esc Esc` | 検索ハイライトクリア |
+| `Space ff` | ファイル検索 (telescope) |
+| `Space fg` | テキスト全文検索 (ripgrep) |
+| `Space fb` | バッファ一覧 |
+| `Space e` | ファイルツリー (nvim-tree) |
+| `gd` | 定義へジャンプ |
+| `gr` | 参照一覧 |
+| `K` | ドキュメント表示 |
+| `Space rn` | リネーム |
+| `Space ca` | コードアクション |
+| `Space f` | フォーマット |
+| `[d` / `]d` | 前/次の診断へ |
+| `ss` / `sv` | 画面分割(横/縦) |
+| `st` / `sn` / `sp` | タブ新規/次/前 |
+| `Ctrl-hjkl` | ウィンドウ移動 |
+| `Esc Esc` | 検索ハイライト消去 |
 
-## 📚 プラグイン一覧
+## トラブルシューティング
 
-### 現在導入済み
+```shell
+# プラグインを入れ直す
+nvim --headless "+Lazy! sync" +qa
 
-| プラグイン | 用途 |
-|-----------|------|
-| dein.vim | プラグインマネージャー |
-| vim-surround | テキスト囲み |
-| denite.nvim | ファイル検索・バッファ管理 |
-| vim-anzu | 検索結果表示 |
-| nerdtree | ファイルツリー |
-| ale | Linter |
-| vim-autoclose | 括弧自動補完 |
-| fzf, fzf.vim | あいまい検索 |
-| vim-multiple-cursors | マルチカーソル |
-| deoplete.nvim | 自動補完エンジン |
-
-### 推奨プラグイン（RECOMMENDATIONS.md参照）
-
-優先度の高いものから：
-
-1. **CoC (coc.nvim)** - LSP統合で開発効率が劇的に向上
-2. **vim-fugitive** - Git操作がvim内で完結
-3. **vim-commentary** - コメントアウトが超快適
-4. **gruvbox** - 見やすいカラースキーム
-5. **vim-airline** - ステータスラインが見やすい
-
-詳細は [RECOMMENDATIONS.md](./RECOMMENDATIONS.md) を参照してください。
-
-## 🎨 カラースキーム
-
-現在はコメントされていますが、以下のカラースキームが利用可能です：
-
-```vim
-" init.vim で有効化
-colorscheme molokai
-" または推奨のgruvbox
-colorscheme gruvbox
+# 状態を全部リセットして再構築(設定ファイルは消えない)
+rm -rf ~/.local/share/nvim ~/.local/state/nvim ~/.cache/nvim
+nvim
 ```
-
-## 📖 ショートカットリファレンス
-
-### NERDTree
-
-#### ファイル操作
-
-file 
-
-|key|value|
-|:---:|:---|
-|m|show nerdtree menu|
-|I|Toggle hidden files|
-|R|Refresh|
-|?|show help|
-|o|open file|
-|t|open file tab|
-|T|open file background tab|
-|i|open file split display(holizon)|
-|gi|open file preview(holizon)|
-|s|open file split display(vertical)|
-|gs|open file preview(vertical)|
-
-directory
-
-|key|value|
-|:---:|:---|
-|O|open directory recursive|
-|x|close directory|
-|X|close directory recursive|
-|P|move cursor to root direwctory|
-|p|move cursor to parent directry|
-|K|move cursor to root same directory|
-|J|move cursor to last same directory|
-|ctrl +j/k|move cursor to next/previous item|
-|C|change root on this cursor|
-|u|move up directory, change root|
-|F/FF|switch show files, show only directory|
-|q|quit nerdtree|
-|||
-
-Bookmark
-
-|key|value|
-|:---:|:---|
-|o|開く|
-|t|別タブで開く|
-|T|別タブにてバックグラウンドで開く|
-|D|ブックマークから削除|
-|:Bookmark <name>|ブックマークに登録|
-|:OpenBookmark <name>|ブックマークを指定して開く|
-|:ClearBookmark <name>|ブックマークを削除|
-|:ClearAllBookmark|全部のブックマークを削除|

@@ -1,33 +1,249 @@
-# Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
+# ~/.zshrc
+# 1ファイル構成(旧.zshrc.profile.*.zshを統合)
+# 方針: プラグインマネージャ・フレームワーク(Prezto等)は使わず軽量に保つ
 
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+# ================================================================
+# PATH
+# ================================================================
+typeset -U path PATH                  # PATHの重複エントリを自動で除去
+# Homebrewを先頭に(これが無いとApple版gitが/opt/homebrew/binのgitより優先されてしまう)
+eval "$(/opt/homebrew/bin/brew shellenv)"
+export PATH="$HOME/.local/bin:$PATH"  # claude等のネイティブインストーラ系
+
+# ================================================================
+# 言語
+# ================================================================
+export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
+
+# ================================================================
+# 履歴
+# ================================================================
+export HISTFILE=${HOME}/.zsh_history # 履歴ファイルの保存先
+export HISTSIZE=100000               # メモリに保存される履歴の件数(SAVEHISTと揃える)
+export SAVEHIST=100000               # 履歴ファイルに保存される履歴の件数
+setopt share_history                 # 同時に起動したzshの間でヒストリを共有
+setopt hist_reduce_blanks            # 余分な空白は詰めて記録
+setopt hist_expand                   # 補完時にヒストリを自動的に展開
+setopt hist_ignore_space             # 先頭スペースのコマンドは履歴に残さない
+setopt hist_ignore_all_dups          # 同じコマンドは履歴に重複させない
+setopt extended_history              # 実行時刻・所要時間も履歴に記録
+setopt interactive_comments          # コマンドラインでも # 以降をコメントと見なす
+
+## コマンドを途中まで入力後、Ctrl+p/nでhistoryから絞り込み
+autoload -Uz history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^P" history-beginning-search-backward-end
+bindkey "^N" history-beginning-search-forward-end
+
+# ================================================================
+# 補完
+# ================================================================
+if [ -e /opt/homebrew/share/zsh-completions ]; then
+  fpath=(/opt/homebrew/share/zsh-completions $fpath)
+fi
+autoload -Uz compinit
+compinit -u
+
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # 小文字でも大文字にマッチさせる
+zstyle ':completion:*' list-colors ''               # 補完候補一覧をカラー表示
+setopt list_packed                                  # 補完候補を詰めて表示
+setopt no_beep                                      # ビープ音消去
+
+# ================================================================
+# ディレクトリ移動
+# ================================================================
+setopt auto_cd                       # ディレクトリ名だけでcd
+setopt auto_pushd                    # cdで移動履歴をスタックに積む(cd - + Tabで遡れる)
+setopt pushd_ignore_dups             # 移動履歴の重複は積まない
+
+# ================================================================
+# プロンプト (Prezto/agnosterは廃止。gitブランチ表示だけの軽量構成)
+# ================================================================
+autoload -Uz vcs_info
+zstyle ':vcs_info:git:*' formats ' %F{magenta}(%b)%f'
+zstyle ':vcs_info:git:*' actionformats ' %F{red}(%b|%a)%f'
+precmd() { vcs_info }
+setopt prompt_subst
+PROMPT='%F{cyan}%~%f${vcs_info_msg_0_} %(?.%F{green}.%F{red})❯%f '
+
+# ================================================================
+# ツール連携
+# ================================================================
+## mise (バージョン管理ツール)
+if command -v mise >/dev/null; then
+  eval "$(mise activate zsh)"
 fi
 
-## Customize to your needs...
+## ghq + fzf: Ctrl+g でリポジトリを検索して移動
+function ghq-fzf() {
+  local selected
+  selected=$(ghq list | fzf --reverse --prompt="repo > " --preview "ls -1 $(ghq root)/{}")
+  if [ -n "$selected" ]; then
+    BUFFER="cd $(ghq root)/${selected}"
+    zle accept-line
+  fi
+  zle reset-prompt
+}
+zle -N ghq-fzf
+bindkey '^g' ghq-fzf
 
-#**自分のカスタマイズしたプロファイルをロード**
-ZSH_MY_PROFILE=~/.zshrc.profile.zsh
-if [[ -s ${ZSH_MY_PROFILE} ]]; then
-  source ${ZSH_MY_PROFILE}
+## hstr: Ctrl+r でコマンド履歴を検索
+if command -v hstr >/dev/null; then
+  alias hh=hstr
+  export HSTR_CONFIG=hicolor
+  bindkey -s "\C-r" "\C-a hstr -- \C-j"
 fi
 
+## golang
+# ※goの有無で分岐しない(miseのPATH注入は最初のプロンプト表示時なので、.zshrc実行中はgoが見えない)
+export GOPATH=$HOME/opt/go
+mkdir -p $GOPATH
+export PATH="$PATH:$GOPATH/bin"
 
-# #や^が使えなくなる問題が発生しているので一旦無効
-setopt NO_EXTENDED_GLOB
+## nvim
+export XDG_CONFIG_HOME="$HOME/.config"
+export EDITOR=nvim                   # git commit等で使うエディタ
 
+## postgresql client (libpq)
+if [ -d /opt/homebrew/opt/libpq ]; then
+  export LDFLAGS="-L/opt/homebrew/opt/libpq/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/libpq/include"
+fi
 
-# コマンドの結果が出力されなくなる問題を修正
-setopt prompt_cr
-setopt prompt_sp
+# ================================================================
+# エイリアス
+# ================================================================
+## base command
+alias _="sudo"
+alias mk="mkdir"
+alias v='vim'
+alias vi='vim'
+alias grep='grep --color=auto'
 
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+## Library command
+alias nv='nvim'
+alias el="elixir"
+alias iex="iex" # 省略しない
+alias erl="erl" # 省略しない
+alias n="npm"
+alias k="kubectl"
+alias dr="docker"
+alias clip='pbcopy'
+alias fz='fzf'
+
+## cd系
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ..2='cd ../..'
+alias ..3='cd ../../..'
+alias ..4='cd ../../../..'
+alias gohome='cd ~'
+
+## ls系
+alias l='ls -ltrG'
+alias ll="ls -la"
+alias ls='ls -G'
+
+## git系
+alias g="git"
+alias gf="git fetch"
+alias gfp="git fetch -p"
+alias ga="git add -A"
+alias gb="git branch"
+alias gs="git status"
+alias gpl="git pull"
+alias gcm="git commit -m"
+alias gps="git push"
+alias gco="git checkout"
+alias gcob="git checkout -b"
+alias gd="git diff"
+alias gitbranchnameclip="git branch --show-current | clip" # ブランチ名をクリップボードにコピー
+alias gbn=gitbranchnameclip
+alias gcl="git clean -fd"                                  # 未追跡のファイル/ディレクトリを一撃で削除する
+
+## Jetbrains
+alias idea='open -na "IntelliJ IDEA.app" --args "$@"'
+alias webs='open -na "WebStorm.app" --args "$@"'
+alias rubym='open -na "RubyMine.app" --args "$@"'
+alias phps='open -na "PhpStorm.app" --args "$@"'
+alias goland='open -na "GoLand.app" --args "$@"'
+alias clion='open -na "CLion.app" --args "$@"'
+alias pych='open -na "PyCharm.app" --args "$@"'
+
+## パスワードジェネレータ
+alias passgen='openssl rand -base64 16 | pbcopy'
+alias passgenweak='openssl rand -hex 8 | pbcopy'
+alias passgenw=passgenweak
+
+## その他
+alias myip="curl https://ipinfo.io/json"    # ipアドレスを取得
+alias myhttp="ruby -run -e httpd . -p 8000" # カレントディレクトリを基準にHTTPサーバを起動
+
+## コマンドで話す
+### WARNING! 音声を予めダウンロードしておく
+alias alex='say -v Alex -r 200 -i '
+alias vicky='say -v Vicki -r 200 -i '
+alias kyoko='say -v Kyoko -r 200 -i '
+
+# ================================================================
+# iTerm2
+# ================================================================
+export CLICOLOR=1
+export LSCOLORS="GxFxCxDxBxegedabagaced"
+export LS_COLORS='di=33;:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
+
+## itermのタブに名前をつける
+function tab() {
+  echo -ne "\e]1;$@ \a"
+}
+
+## itermのタブのカラーを変更する
+function tab-color() {
+  echo -ne "\033]6;1;bg;red;brightness;$1\a"
+  echo -ne "\033]6;1;bg;green;brightness;$2\a"
+  echo -ne "\033]6;1;bg;blue;brightness;$3\a"
+}
+
+alias t_yellow='tab-color 255 255 0'
+alias t_blue='tab-color 0 0  255'
+alias t_green='tab-color 0 128 128'
+alias t_aqua='tab-color 0 255  255'
+alias t_red='tab-color 255 0 0'
+alias t_pink='tab-color 255 0 255'
+alias t_purple='tab-color 128 0 128'
+alias t_olive='tab-color 128 128 0'
+
+## バックグランドのカラーを変える
+alias b_prod='echo -ne "\033]1337;SetColors=bg=330000\a"'
+alias b_stg='echo -ne "\033]1337;SetColors=bg=003366\a"'
+alias b_work='echo -ne "\033]1337;SetColors=bg=5B0066\a"'
+alias b_work2='echo -ne "\033]1337;SetColors=bg=00665B\a"'
+
+## itermのプロファイルを切り替えるコマンド
+alias changeprofile='(){echo -e "\033]1337;SetProfile=$1\a"}'
+alias office="changeprofile office"
+alias home="changeprofile home"
+alias cafe="changeprofile cafe"
+
+## iterm起動時はhomeプロファイルを適用
+# ※エイリアスはifブロック内(同一解釈単位)では展開されないため、直接エスケープシーケンスを出す
+if [ -n "$ITERM_SESSION_ID" ]; then
+  printf '\033]1337;SetProfile=home\a'
+fi
+
+# ================================================================
+# プラグイン (brew install zsh-autosuggestions zsh-syntax-highlighting)
+# ================================================================
+## fish風の入力候補表示(→キーで確定)
+if [ -e /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+## コマンドの色付け(存在しないコマンドは赤く表示)
+# ※.zshrcの最後でsourceする必要がある
+if [ -e /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
