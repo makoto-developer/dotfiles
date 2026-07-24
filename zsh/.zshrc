@@ -89,6 +89,24 @@ function ghq-fzf() {
 zle -N ghq-fzf
 bindkey '^g' ghq-fzf
 
+## repos: 配下の全gitリポジトリのstatusを一覧(マルチリポジトリの俯瞰用)
+function repos() {
+  local dir st dirty
+  for dir in */.git(N/); do
+    dir=${dir%/.git}
+    st=$(git -C "$dir" status -sb 2>/dev/null | head -1)
+    dirty=$(git -C "$dir" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+    printf '%-36s %s' "$dir" "$st"
+    [ "$dirty" != "0" ] && printf '  [変更%s件]' "$dirty"
+    printf '\n'
+  done
+}
+
+## zoxide: cdの強化版(z <名前の一部>で頻出ディレクトリへジャンプ、ziで一覧から選択)
+if command -v zoxide >/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
 ## hstr: Ctrl+r でコマンド履歴を検索
 if command -v hstr >/dev/null; then
   alias hh=hstr
@@ -118,7 +136,7 @@ fi
 ## base command
 alias _="sudo"
 alias mk="mkdir"
-alias v='vim'
+alias v='nvim'
 alias vi='vim'
 alias grep='grep --color=auto'
 

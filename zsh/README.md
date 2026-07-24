@@ -24,11 +24,12 @@ ln -s ~/dotfiles/zsh/.zshrc ~/.zshrc
 exec zsh
 ```
 
-## キーバインド
+## キーバインド・コマンド
 
 - `Ctrl + g` — ghq管理下のリポジトリをfzfで検索して移動
 - `Ctrl + r` — hstrでコマンド履歴を検索
 - `Ctrl + p` / `Ctrl + n` — 入力途中の文字列でhistoryを前方/後方検索
+- `z <名前の一部>` — 頻出ディレクトリへジャンプ(zoxide)。`zi`で一覧から選択
 
 ## 中身の構成(.zshrc内のセクション)
 

@@ -1,39 +1,34 @@
 # Vim設定
 
-Vim/Neovim/IdeaVimの設定。メインはNeovim。
+方針: **普段使いはNeovim**で、リッチな設定(キーマップ・マクロ・プラグイン)はすべて`nvim/init.lua`に集約。
+標準VimとIdeaVimは最小限の設定だけ持つ。VSCodeのVimモードは`vscode/settings.json`側で設定。
 
-## ディレクトリ構成
+## 構成
 
 ```
 vim/
-├── README.md               # このファイル
-├── .vimrc                  # 標準Vim設定(エントリポイント)
-├── .ideavimrc              # JetBrains IDEs(IntelliJ等)用
-├── config/                 # 標準Vim設定の分割管理
-│   ├── main.vim
-│   └── macro.vim
-├── MACRO_GUIDE.md          # マクロの使い方
-├── check-underscore-highlight.vim
-└── nvim/                   # Neovim設定(メイン) -> nvim/README.md参照
+├── README.md
+├── .vimrc          # 標準Vim用の最小設定(サーバ作業・緊急用)
+├── .ideavimrc      # IdeaVim用の最小設定(クリップボード共有・検索・ideajoin)
+└── nvim/           # Neovim(メイン) -> nvim/README.md参照
     ├── init.lua
     └── setup.sh
 ```
 
 ## セットアップ
 
-### 1. Neovim(メイン)
+### Neovim(メイン)
 
 [nvim/README.md](./nvim/README.md)を参照。`./setup.sh`を実行するだけ。
 
-### 2. 標準Vim
+### 標準Vim
 
 ```shell
 ln -sf ~/dotfiles/vim/.vimrc ~/
 mkdir -p ~/.vim/undo
-ln -sfn ~/dotfiles/vim/config ~/.vim/config
 ```
 
-### 3. JetBrains IDEs(IntelliJ等)
+### JetBrains IDEs(IdeaVim)
 
 ```shell
 ln -sf ~/dotfiles/vim/.ideavimrc ~/
@@ -41,9 +36,3 @@ ln -sf ~/dotfiles/vim/.ideavimrc ~/
 # JetBrainsのIDEで「IdeaVim」プラグインをインストール
 # Settings -> Plugins -> IdeaVim
 ```
-
-## 方針
-
-- Neovimは`nvim/init.lua`の1ファイル構成(lazy.nvim + 組み込みLSP + treesitter)。Node/Python依存なし
-- 標準Vim(.vimrc)はプラグインなしの素の設定。サーバ作業など最低限の用途向け
-- クリップボード共有(`y`でシステムクリップボードへ)、インデント2スペース(Goは4・タブ)、undo永続化は全環境共通

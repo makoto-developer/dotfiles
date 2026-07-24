@@ -1,0 +1,22 @@
+# gh-dash設定 (https://dlvhdr.github.io/gh-dash/)
+# 起動: gh dash / タブ切替: Tab / PRのcheckout: C / 開く: Enter
+
+prSections:
+  - title: レビュー依頼
+    filters: is:open review-requested:@me
+  - title: アサイン
+    filters: is:open assignee:@me
+  - title: 自分のPR
+    filters: is:open author:@me
+  - title: 関与中
+    filters: is:open involves:@me -author:@me
+
+issuesSections:
+  - title: アサインIssue
+    filters: is:open assignee:@me
+  - title: 自分のIssue
+    filters: is:open author:@me
+
+defaults:
+  view: prs
+  refetchIntervalMinutes: 5
