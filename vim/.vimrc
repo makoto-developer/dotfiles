@@ -43,6 +43,8 @@ au FileType go setlocal sw=4 ts=4 sts=4 noet
 syntax on
 set belloff=all
 set title
+set number
+set cursorline
 set laststatus=2
 set showmatch matchtime=1
 set history=1000

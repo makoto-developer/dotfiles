@@ -56,6 +56,10 @@ opt.showmatch = true
 opt.matchtime = 1
 opt.belloff = 'all'
 opt.history = 1000
+opt.number = true          -- 行番号(普通の連番)
+opt.cursorline = true      -- カーソル行をハイライト
+opt.signcolumn = 'yes'     -- git変更・ブレークポイント等の表示列を常に確保(ガタつき防止)
+opt.scrolloff = 8          -- カーソルの上下に常に8行の余白(VSCode設定と同じ)
 
 -- 検索
 opt.ignorecase = true
@@ -669,7 +673,10 @@ require('lazy').setup({
       { '<leader>e', '<Cmd>NvimTreeToggle<CR>', desc = 'ファイルツリー' },
     },
     config = function()
-      require('nvim-tree').setup({})
+      require('nvim-tree').setup({
+        -- 開いているファイルにツリーを自動で追従・ハイライトする
+        update_focused_file = { enable = true },
+      })
       -- 起動時にツリーを自動で開く(カーソルは開いたファイル側に残す)
       vim.api.nvim_create_autocmd('VimEnter', {
         callback = function(data)
