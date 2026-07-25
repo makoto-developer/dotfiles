@@ -24,6 +24,23 @@ nvim                          # 初回起動で全部自動インストールさ
 :Mason     " LSPサーバの状態
 ```
 
+## 対応言語(LSP)
+
+Masonが初回起動時に自動インストールする。`:Mason`で状態確認。
+
+| 言語・用途 | サーバ |
+|-----------|--------|
+| Elixir(.ex/.exs/.heex) | elixirls |
+| TypeScript / JavaScript | ts_ls + eslint(lintは`sa`で自動修正) |
+| Go | gopls |
+| Rust | rust_analyzer |
+| HTML / CSS | html / cssls |
+| Tailwind | tailwindcss(heexでもクラス名補完・色プレビューが効く) |
+| シェルスクリプト | bashls |
+| Dockerfile | dockerls |
+| JSON / YAML | jsonls / yamlls |
+| Lua | lua_ls |
+
 ## 構成ファイル
 
 - `init.lua` — 設定はこの1ファイルのみ

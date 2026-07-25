@@ -43,3 +43,4 @@ lg = log --decorate --oneline --graph
 ## 特定のコミットログのファイル名のみを表示
 getFileNameOnly = "!getFileNameOnly () { git show --name-only --pretty="" $1;};getFileNameOnly"
 gfno = getFileNameOnly
+

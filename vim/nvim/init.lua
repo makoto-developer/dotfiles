@@ -297,11 +297,17 @@ require('lazy').setup({
         'mason-org/mason-lspconfig.nvim',
         opts = {
           ensure_installed = {
-            'elixirls',        -- Elixir
+            'elixirls',        -- Elixir(.ex/.exs/.heex)
             'ts_ls',           -- TypeScript/JavaScript
+            'eslint',          -- TS/JSのlint(警告をsaで自動修正できる)
             'gopls',           -- Go
             'rust_analyzer',   -- Rust
             'lua_ls',          -- Lua
+            'html',            -- HTML
+            'cssls',           -- CSS
+            'tailwindcss',     -- Tailwind(クラス名補完・色プレビュー。heexにも効く)
+            'bashls',          -- シェルスクリプト(deploy.sh等)
+            'dockerls',        -- Dockerfile
             'jsonls', 'yamlls',
           },
         },
@@ -333,6 +339,11 @@ require('lazy').setup({
       }
       vim.lsp.config('ts_ls', {
         settings = { typescript = { inlayHints = ts_inlay }, javascript = { inlayHints = ts_inlay } },
+      })
+      -- Tailwindのクラス名補完をPhoenixのheexテンプレートでも効かせる
+      vim.lsp.config('tailwindcss', {
+        filetypes = { 'html', 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'elixir', 'eelixir', 'heex' },
+        init_options = { userLanguages = { elixir = 'html-eex', eelixir = 'html-eex', heex = 'html-eex' } },
       })
       -- 補完エンジンのcapabilitiesを全サーバに適用
       vim.lsp.config('*', {
