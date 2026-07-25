@@ -73,6 +73,8 @@ IntelliJの機能名の頭文字で覚える。IntelliJ風(Cmd系)・vim標準�
 | バッファ一覧 | `sb` | **b**uffer | `Space fb` |
 | カーソル下の単語を横断検索 | `sw` | **w**ord | リポジトリを跨ぐ呼び出し追跡に(`su`はリポジトリ内のみ) |
 | 定義へ移動 | `sd` | **d**efinition | `Ctrl+]` / `gd` |
+| 定義を覗く(今の場所を離れない) | `sy` | IntelliJのCmd+**Y** | 閉じるのは`sY` |
+| キー一覧をその場で表示 | `s?` | which-key | `s`を押して0.5秒待っても出る |
 | ジャンプから戻る/進む | `Ctrl+o` / `Ctrl+i` | vim標準 | - |
 | 使用箇所検索 | `su` | **u**sage | `grr` / `Opt+F7` |
 | 実装へ移動 | `si` | **i**mplementation | `gri` |
@@ -117,6 +119,8 @@ IntelliJの機能名の頭文字で覚える。IntelliJ風(Cmd系)・vim標準�
 対応言語: テストはgo(go test) / Elixir(ExUnit) / TS・JS(jest)。デバッグはgo(delve) / Elixir(elixir-ls) / Node・TS(js-debug)。
 
 - 長い関数の中では画面上部に「今いる関数・モジュールの宣言行」が自動で固定表示される(treesitter-context)
+- カーソル下のシンボルと同じものが自動でハイライトされる(vim-illuminate)
+- `:GBrowse`でカーソル行のGitHubページを開く(選択範囲も可。`:GBrowse!`でURLをクリップボードへ)
 - 引数なしで`nvim`を起動すると、そのディレクトリの前回セッション(ウィンドウ・タブ・開いていたファイル)が自動復元される(persistence)
 
 ### 大規模リポジトリ・レビューのTips

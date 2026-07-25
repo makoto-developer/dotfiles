@@ -107,6 +107,11 @@ map('n', '<C-j>', '<C-w>j')
 map('n', '<C-k>', '<C-w>k')
 map('n', '<C-l>', '<C-w>l')
 
+-- sはプレフィックス専用にする(単体では何も起きない)
+-- 組み込みのsは「1文字削除して挿入モード」。sの後の入力がtimeoutlen(1秒)を超えると
+-- 素のsが発動して意図せず文字が消えるため無効化する。本来のsが必要な場合はclで代替
+map({ 'n', 'x' }, 's', '<Nop>')
+
 -- sプレフィックスでウィンドウ・タブ操作
 map('n', 'sj', '<C-w>j')
 map('n', 'sk', '<C-w>k')
@@ -516,6 +521,42 @@ require('lazy').setup({
     opts = {},
   },
 
+  -- カーソル下のシンボルの出現箇所を自動ハイライト(IntelliJが標準でやること)
+  { 'RRethy/vim-illuminate', event = 'LspAttach' },
+
+  -- 定義をフローティングウィンドウで覗く(IntelliJのCmd+Y。今いる場所を失わない)
+  {
+    'rmagatti/goto-preview',
+    keys = {
+      -- IntelliJのQuick Definition(Cmd+Y)から y
+      { 'sy', function() require('goto-preview').goto_preview_definition() end, desc = '定義を覗く(Cmd+Y相当)' },
+      { 'sY', function() require('goto-preview').close_all_win() end, desc = 'プレビューを全部閉じる' },
+    },
+    opts = { default_mappings = false },
+  },
+
+  -- キーを押すと続きの候補と説明がポップアップ(s系が25キーあるため)
+  {
+    'folke/which-key.nvim',
+    event = 'VeryLazy',
+    opts = {
+      delay = 500,  -- 押してから0.5秒で表示(すぐ打つ時は邪魔しない)
+      spec = {
+        { 's', group = 'メイン操作' },
+        { '<leader>g', group = 'git' },
+        { '<leader>t', group = 'テスト' },
+        { '<leader>f', group = 'ファイル・検索' },
+        { '<leader>d', group = 'デバッグ・削除' },
+      },
+    },
+    keys = {
+      { 's?', function() require('which-key').show({ keys = 's', loop = true }) end, desc = 's系のキー一覧' },
+    },
+  },
+
+  -- fugitiveのGitHub連携(:GBrowseでカーソル行のGitHubパーマリンクを開く/コピー)
+  { 'tpope/vim-rhubarb', dependencies = { 'tpope/vim-fugitive' }, event = 'VeryLazy' },
+
   -- quickfixウィンドウの強化(候補のプレビュー表示・絞り込み)
   { 'kevinhwang91/nvim-bqf', ft = 'qf', opts = {} },
 
@@ -545,10 +586,15 @@ require('lazy').setup({
   },
 
   -- Markdownをエディタ内で整形表示(見出し・表・チェックボックス等を装飾。ブログ執筆用)
+  -- 通常はモード連動(ノーマル=装飾/挿入=生テキスト)。表を編集する時など生表示に固定したい場合はsmで切り替える
   {
     'MeanderingProgrammer/render-markdown.nvim',
     ft = { 'markdown' },
     opts = {},
+    keys = {
+      { 'sm', '<Cmd>RenderMarkdown buf_toggle<CR>', ft = 'markdown', desc = 'Markdown装飾のON/OFF(Markdown)' },
+      { 'sM', '<Cmd>RenderMarkdown preview<CR>', ft = 'markdown', desc = 'Markdownを横に並べてプレビュー(Markdown)' },
+    },
   },
 
   -- undo履歴のツリー表示(IntelliJのLocal History相当。保存を跨いで任意の時点に戻れる)
