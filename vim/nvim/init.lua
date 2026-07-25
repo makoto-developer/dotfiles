@@ -51,6 +51,12 @@ opt.smartindent = true
 opt.completeopt = 'menuone,noinsert,noselect'
 
 -- 表示
+-- 背景は常に「暗い」扱いにする。
+-- ※明示的に設定しておくと、Neovimが起動時にターミナルへ背景色を問い合わせて(OSC 11)
+--   'background'を自動で書き換える動作が無効になる(runtime/lua/vim/_core/defaults.lua)。
+--   これが無いと、macOSをライトモードにするとiTermが白背景になり、'background'がlightへ
+--   変わった副作用でカラースキームが解除され(colors_nameがnilに戻る)、組み込みのライト配色に落ちる。
+opt.background = 'dark'
 opt.title = true
 opt.showmatch = true
 opt.matchtime = 1
@@ -691,14 +697,19 @@ require('lazy').setup({
         update_focused_file = { enable = true },
       })
       -- 起動時にツリーを自動で開く(カーソルは開いたファイル側に残す)
+      -- ※`nvim .`のようにディレクトリを渡すと、VimEnterの時点でnvim-treeが既にツリーを
+      --   開いており、data.fileもディレクトリではなくツリーのバッファ名になっている。
+      --   ここでtoggleすると開いているツリーを閉じてしまうため、判定は起動引数で行い、
+      --   「開く方向にしか作用しない」APIだけを使う。
       vim.api.nvim_create_autocmd('VimEnter', {
-        callback = function(data)
+        callback = function()
           local api = require('nvim-tree.api')
-          if vim.fn.isdirectory(data.file) == 1 then
-            vim.cmd.cd(data.file)
+          local arg = vim.fn.argc() > 0 and vim.fn.argv(0) or ''
+          if type(arg) == 'string' and vim.fn.isdirectory(arg) == 1 then
+            vim.cmd.cd(arg)
             api.tree.open()
           else
-            api.tree.toggle({ focus = false, find_file = true })
+            api.tree.find_file({ open = true, focus = false })
           end
         end,
       })
@@ -740,6 +751,30 @@ require('lazy').setup({
       },
     },
   },
+})
+
+-- ================================================================
+-- 背景を暗い扱いに固定する(ターミナルがライトモードでも配色を維持)
+-- ================================================================
+-- Neovimは起動時にOSC 11でターミナルの背景色を問い合わせ、明るければ'background'をlightに
+-- 書き換える。その副作用でカラースキームが解除され(colors_nameがnilに戻る)、組み込みの
+-- ライト配色に落ちる。macOSをライトモードにするとiTermが白背景になるため、これが起きる。
+--
+-- 'background'を設定ファイルから明示設定すると、この自動判定のautocmdは削除される。
+-- ただし判定は「最後に設定した主体がLuaチャンク(SID -8)でないこと」で行われるため、
+-- 冒頭で設定するだけでは足りない。カラースキーム適用時にnightfoxのコンパイル済みキャッシュが
+-- vim.o.backgroundを設定し直し、記録がSID -8で上書きされてしまうからである。
+-- そのためlazy.setupの後に、この設定ファイルから設定し直す。
+opt.background = 'dark'
+
+-- 上記をすり抜けて'background'が変えられた場合の保険(配色を暗いものへ戻す)
+vim.api.nvim_create_autocmd('OptionSet', {
+  pattern = 'background',
+  callback = function()
+    if vim.o.background == 'dark' then return end
+    vim.o.background = 'dark'
+    pcall(vim.cmd.colorscheme, 'carbonfox')
+  end,
 })
 
 -- ================================================================
