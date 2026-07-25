@@ -76,12 +76,18 @@ if command -v mise >/dev/null; then
   eval "$(mise activate zsh)"
 fi
 
-## ghq + fzf: Ctrl+g でリポジトリを検索して移動
+## ghq + fzf: Ctrl+g でリポジトリを検索して移動(ghq管理下 + orcaのプロジェクト)
 function ghq-fzf() {
-  local selected
-  selected=$(ghq list | fzf --reverse --prompt="repo > " --preview "ls -1 $(ghq root)/{}")
+  local root selected
+  root=$(ghq root)
+  selected=$(
+    {
+      ghq list | while read -r r; do printf '%s\t%s\n' "$r" "$root/$r"; done
+      for d in ~/orca/projects/*(N/); do printf 'orca/%s\t%s\n' "${d:t}" "$d"; done
+    } | fzf --reverse --prompt="repo > " --delimiter=$'\t' --with-nth=1 --preview 'ls -1 {2}' | cut -f2
+  )
   if [ -n "$selected" ]; then
-    BUFFER="cd $(ghq root)/${selected}"
+    BUFFER="cd ${selected}"
     zle accept-line
   fi
   zle reset-prompt

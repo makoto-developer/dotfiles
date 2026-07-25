@@ -38,8 +38,15 @@ Masonが初回起動時に自動インストールする。`:Mason`で状態確�
 | Tailwind | tailwindcss(heexでもクラス名補完・色プレビューが効く) |
 | シェルスクリプト | bashls |
 | Dockerfile | dockerls |
+| Markdown | marksman(記事間のリンク補完・見出しジャンプ) |
 | JSON / YAML | jsonls / yamlls |
 | Lua | lua_ls |
+| Swift | sourcekit(Xcode同梱のものを使う。Mason管理外) |
+| Terraform | terraformls(miseで導入済みのものを使う。Mason管理外) |
+
+**サーバを増やしても重くならない**: LSPは対応するファイルを開いた時にだけ起動する。
+何も開いていない状態で動いているLSPプロセスは0個で、Elixirを編集している時に動くのはelixirlsだけ。
+コストはディスク容量と初回インストール時間だけ(起動時間は約54ms)。
 
 ## 構成ファイル
 

@@ -308,6 +308,7 @@ require('lazy').setup({
             'tailwindcss',     -- Tailwind(クラス名補完・色プレビュー。heexにも効く)
             'bashls',          -- シェルスクリプト(deploy.sh等)
             'dockerls',        -- Dockerfile
+            'marksman',        -- Markdown(記事間のリンク補完・見出しジャンプ)
             'jsonls', 'yamlls',
           },
         },
@@ -349,6 +350,11 @@ require('lazy').setup({
       vim.lsp.config('*', {
         capabilities = require('cmp_nvim_lsp').default_capabilities(),
       })
+
+      -- Mason管理外のサーバ(既にディスク上にあるものを使う。追加インストール不要)
+      -- Swift: Xcodeに同梱 / Terraform: miseで導入済み
+      if vim.fn.executable('xcrun') == 1 then vim.lsp.enable('sourcekit') end
+      if vim.fn.executable('terraform-ls') == 1 then vim.lsp.enable('terraformls') end
     end,
   },
 
