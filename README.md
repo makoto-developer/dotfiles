@@ -188,8 +188,6 @@ ln -sn ~/dotfiles/claude/skills ~/.claude/skills
 
 - `/claude-md-init` — マイクロサービス群のルートで実行すると、配下のリポジトリを調査して
   CLAUDE.md(サービスマップ)を生成する
-- `/update-env` — brew/mise/nvimプラグイン/gh拡張をまとめて更新し、動作検証してから
-  コミットを提案する(月次メンテ用)
 
 ※`~/.claude/settings.json`はツール(orca等)が自動管理するためdotfilesには含めない
 
