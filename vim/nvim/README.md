@@ -86,6 +86,33 @@ IntelliJの機能名の頭文字で覚える。IntelliJ風(Cmd系)・vim標準�
 | 前/次の診断へ | `[d` / `]d` | vim標準 | - |
 | コメントトグル | `gcc`(行) / `gc`(選択) | vim標準 | `Cmd+/` |
 
+### IntelliJの機能に対応するもの
+
+| IntelliJ | 操作 | キー |
+|----------|------|------|
+| Ctrl+Opt+H (Call Hierarchy) | 呼び出し元をたどる | `sC`(呼ばれている先は`Space co`) |
+| Ctrl+Opt+O (Optimize Imports) | importの整理 | `sI` |
+| Cmd+Shift+A (Find Action) | コマンドを探して実行 | `s;`(キーマップ検索は`s:`) |
+| Cmd+Shift+T (Go to Test) | テストと実装を往復 | `Space tf`(go/elixir/TS対応) |
+| Cmd+Shift+↑↓ (Move Statement) | 行・選択範囲を上下に移動 | `Alt+j` / `Alt+k` |
+| Opt+↑↓ (Extend Selection) | 選択範囲を構文単位で拡大/縮小 | `Alt+o` / `Alt+i` |
+| Cmd+Y (Quick Definition) | 定義を覗く | `sy`(閉じるのは`sY`) |
+| Cmd+- / Cmd+= (Folding) | 折りたたみ開閉 | `za`(全部開く`zR` / 全部畳む`zM`) |
+| Cmd+P (Parameter Info) | 引数のヒント | 挿入モードで`Ctrl+s`(nvim標準) |
+
+### かたまり単位の選択・移動(treesitter-textobjects)
+
+「関数」「クラス」「引数」を単位として選択・削除・移動できる。
+
+| 操作 | キー | 例 |
+|------|------|-----|
+| 関数を選択 / 中身だけ選択 | `vaf` / `vif` | `dif`=関数の中身を削除、`yaf`=関数ごとコピー |
+| クラス・型を選択 | `vac` / `vic` | Goのstruct、Elixirのdefmodule等 |
+| 引数を選択 | `vaa` / `via` | `daa`=引数を1つ削除 |
+| コメントを選択 | `va/` / `vi/` | |
+| 次/前の関数へ移動 | `]f` / `[f` | 巨大なファイルを関数単位で読み飛ばす |
+| 次/前のクラス・型へ移動 | `]k` / `[k` | |
+
 ### git・ファイルツリー・レビュー
 
 | 操作 | キー | 覚え方 |

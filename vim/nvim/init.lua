@@ -201,6 +201,104 @@ map('n', '<D-/>', 'gcc', { remap = true })                               -- Cmd+
 map('x', '<D-/>', 'gc', { remap = true })
 
 -- ================================================================
+-- IntelliJの機能をキーに割り当てる(プラグイン不要。LSP・treesitterの機能を呼ぶだけ)
+-- ================================================================
+
+-- import整理(IntelliJのCtrl+Opt+O)。未使用importの削除と並べ替え
+map('n', 'sI', function()
+  vim.lsp.buf.code_action({
+    context = { only = { 'source.organizeImports' }, diagnostics = {} },
+    apply = true,
+  })
+end, { desc = 'importを整理(Imports)' })
+
+-- 行・選択範囲を上下に移動(IntelliJのCmd+Shift+↑↓)
+map('n', '<A-j>', '<Cmd>m .+1<CR>==', { desc = '行を下へ移動' })
+map('n', '<A-k>', '<Cmd>m .-2<CR>==', { desc = '行を上へ移動' })
+map('x', '<A-j>', ":m '>+1<CR>gv=gv", { desc = '選択範囲を下へ移動' })
+map('x', '<A-k>', ":m '<-2<CR>gv=gv", { desc = '選択範囲を上へ移動' })
+
+-- 選択範囲を構文単位で拡大・縮小(IntelliJのOpt+↑↓)
+-- 変数 -> 式 -> 文 -> 関数 のように、意味のあるかたまり単位で広がる
+local ts_sel_stack = {}
+local function ts_select_node(node)
+  local sr, sc, er, ec = node:range()
+  vim.fn.setpos("'<", { 0, sr + 1, sc + 1, 0 })
+  vim.fn.setpos("'>", { 0, er + 1, ec, 0 })
+  vim.cmd('normal! gv')
+end
+local function ts_expand()
+  local ok, node = pcall(vim.treesitter.get_node)
+  if not ok or not node then return end
+  local mode = vim.fn.mode()
+  if mode == 'v' or mode == 'V' then
+    vim.cmd('normal! \27') -- 選択範囲をマークに確定させる
+    local s = vim.api.nvim_buf_get_mark(0, '<')
+    local e = vim.api.nvim_buf_get_mark(0, '>')
+    node = vim.treesitter.get_node({ pos = { s[1] - 1, s[2] } })
+    -- 今の選択範囲より大きいノードまで親を辿る
+    while node do
+      local sr, sc, er, ec = node:range()
+      if sr < s[1] - 1 or (sr == s[1] - 1 and sc < s[2])
+        or er > e[1] - 1 or (er == e[1] - 1 and ec > e[2] + 1) then
+        break
+      end
+      node = node:parent()
+    end
+    if not node then return end
+    table.insert(ts_sel_stack, { s, e })
+  else
+    ts_sel_stack = {}
+  end
+  ts_select_node(node)
+end
+local function ts_shrink()
+  local prev = table.remove(ts_sel_stack)
+  if not prev then return end
+  vim.cmd('normal! \27')
+  vim.fn.setpos("'<", { 0, prev[1][1], prev[1][2] + 1, 0 })
+  vim.fn.setpos("'>", { 0, prev[2][1], prev[2][2] + 1, 0 })
+  vim.cmd('normal! gv')
+end
+map({ 'n', 'x' }, '<A-o>', ts_expand, { desc = '選択範囲を構文単位で拡大(out)' })
+map('x', '<A-i>', ts_shrink, { desc = '選択範囲を構文単位で縮小(in)' })
+
+-- テストと実装を行き来する(IntelliJのCmd+Shift+T)
+map('n', '<leader>tf', function()
+  local path = vim.fn.expand('%:p')
+  local candidates
+  if path:match('_test%.go$') then
+    candidates = { (path:gsub('_test%.go$', '.go')) }
+  elseif path:match('%.go$') then
+    candidates = { (path:gsub('%.go$', '_test.go')) }
+  elseif path:match('_test%.exs$') then
+    -- test/foo/bar_test.exs -> lib/foo/bar.ex
+    candidates = { (path:gsub('/test/', '/lib/'):gsub('_test%.exs$', '.ex')) }
+  elseif path:match('%.ex$') then
+    candidates = { (path:gsub('/lib/', '/test/'):gsub('%.ex$', '_test.exs')) }
+  else
+    -- TS/JS: foo.ts <-> foo.test.ts / foo.spec.ts
+    local base, ext = path:match('^(.*)%.([tj]sx?)$')
+    if not base then return vim.notify('対応していないファイル種別です', vim.log.levels.WARN) end
+    if base:match('%.test$') or base:match('%.spec$') then
+      candidates = { base:gsub('%.[ts][ep][se]c?$', '') .. '.' .. ext }
+    else
+      candidates = { base .. '.test.' .. ext, base .. '.spec.' .. ext }
+    end
+  end
+  for _, c in ipairs(candidates) do
+    if vim.fn.filereadable(c) == 1 then return vim.cmd.edit(c) end
+  end
+  vim.notify('対応するファイルが見つかりません: ' .. table.concat(candidates, ', '), vim.log.levels.WARN)
+end, { desc = 'テストと実装を往復' })
+
+-- 折りたたみ(IntelliJのCmd+- / Cmd+=)。treesitterで構文に沿って畳む
+-- zaで開閉、zRで全部開く、zMで全部畳む。起動時は開いた状態にしておく
+opt.foldmethod = 'expr'
+opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+opt.foldlevel = 99
+
+-- ================================================================
 -- ファイルタイプ別マクロ(デバッグ出力・Markdown支援)
 -- ================================================================
 vim.cmd([[
@@ -430,6 +528,12 @@ require('lazy').setup({
       { 'sb', '<Cmd>Telescope buffers<CR>',    desc = 'バッファ一覧(buffer)' },
       -- カーソル下の単語をプロジェクト全体からexact検索(リポジトリを跨ぐ呼び出し追跡に。LSPのsuはリポジトリ内のみ)
       { 'sw', function() require('telescope.builtin').grep_string() end, desc = 'カーソル下の単語を横断検索(word)' },
+      -- 呼び出し階層(IntelliJのCtrl+Opt+H)。「この関数を呼んでいるのは誰か」を辿る
+      { 'sC', '<Cmd>Telescope lsp_incoming_calls<CR>', desc = '呼び出し元をたどる(Callers)' },
+      { '<leader>co', '<Cmd>Telescope lsp_outgoing_calls<CR>', desc = 'この関数が呼んでいる先' },
+      -- コマンド一覧(IntelliJのCmd+Shift+A: Find Action)。;は:と同じキーなので覚えやすい
+      { 's;', '<Cmd>Telescope commands<CR>', desc = 'コマンドを探して実行' },
+      { 's:', '<Cmd>Telescope keymaps<CR>', desc = 'キーマップを検索' },
       -- git変更ファイル一覧(レビュー開始の起点)
       { '<leader>gs', '<Cmd>Telescope git_status<CR>', desc = 'git変更ファイル一覧' },
       -- Space系(予備)
@@ -523,6 +627,50 @@ require('lazy').setup({
 
   -- カーソル下のシンボルの出現箇所を自動ハイライト(IntelliJが標準でやること)
   { 'RRethy/vim-illuminate', event = 'LspAttach' },
+
+  -- 関数・クラス・引数を「かたまり」として選択・移動する
+  -- ※nvim-treesitterのmainブランチを使っているので、こちらもmainブランチ(混在不可)
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = 'main',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    event = { 'BufReadPost', 'BufNewFile' },
+    config = function()
+      require('nvim-treesitter-textobjects').setup({
+        select = { lookahead = true },  -- カーソルが手前にあっても次のかたまりを掴む
+        move = { set_jumps = true },    -- 移動をジャンプリストに積む(Ctrl+oで戻れる)
+      })
+
+      -- 選択・操作の対象にする(例: vaf=関数全体を選択 / dif=関数の中身だけ削除)
+      local select = require('nvim-treesitter-textobjects.select')
+      local objects = {
+        ['af'] = '@function.outer', ['if'] = '@function.inner',   -- function
+        ['ac'] = '@class.outer',    ['ic'] = '@class.inner',      -- class/struct
+        ['aa'] = '@parameter.outer',['ia'] = '@parameter.inner',  -- argument
+        ['a/'] = '@comment.outer',  ['i/'] = '@comment.inner',    -- comment
+      }
+      for key, obj in pairs(objects) do
+        vim.keymap.set({ 'x', 'o' }, key, function()
+          select.select_textobject(obj, 'textobjects')
+        end, { desc = 'textobject ' .. obj })
+      end
+
+      -- 関数・クラス単位で移動する(]cはgitsignsのhunk移動で使うため避ける)
+      local move = require('nvim-treesitter-textobjects.move')
+      local moves = {
+        [']f'] = { 'goto_next_start', '@function.outer', '次の関数へ' },
+        ['[f'] = { 'goto_previous_start', '@function.outer', '前の関数へ' },
+        [']F'] = { 'goto_next_end', '@function.outer', '次の関数の終わりへ' },
+        [']k'] = { 'goto_next_start', '@class.outer', '次のクラス/型へ' },
+        ['[k'] = { 'goto_previous_start', '@class.outer', '前のクラス/型へ' },
+      }
+      for key, m in pairs(moves) do
+        vim.keymap.set({ 'n', 'x', 'o' }, key, function()
+          move[m[1]](m[2], 'textobjects')
+        end, { desc = m[3] })
+      end
+    end,
+  },
 
   -- 定義をフローティングウィンドウで覗く(IntelliJのCmd+Y。今いる場所を失わない)
   {
