@@ -634,12 +634,23 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter-textobjects',
     branch = 'main',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    event = { 'BufReadPost', 'BufNewFile' },
+    -- VeryLazyも入れる: ファイルを開く前(No Nameバッファ)でも]fを自前のキーマップで
+    -- 受け止めて、vim標準の]f(E446: No file name under cursor)を出さないため
+    event = { 'BufReadPost', 'BufNewFile', 'VeryLazy' },
     config = function()
       require('nvim-treesitter-textobjects').setup({
         select = { lookahead = true },  -- カーソルが手前にあっても次のかたまりを掴む
         move = { set_jumps = true },    -- 移動をジャンプリストに積む(Ctrl+oで戻れる)
       })
+
+      -- treesitterのパーサやtextobjectsのクエリが無いバッファ(No Name・プレーンテキスト・
+      -- nvim-tree等)で実行すると、プラグイン内部でエラーになるため事前に弾く
+      local function has_textobjects()
+        local ok, parser = pcall(vim.treesitter.get_parser, 0, nil, { error = false })
+        if not ok or not parser then return false end
+        local q = pcall(vim.treesitter.query.get, parser:lang(), 'textobjects')
+        return q and vim.treesitter.query.get(parser:lang(), 'textobjects') ~= nil
+      end
 
       -- 選択・操作の対象にする(例: vaf=関数全体を選択 / dif=関数の中身だけ削除)
       local select = require('nvim-treesitter-textobjects.select')
@@ -651,7 +662,8 @@ require('lazy').setup({
       }
       for key, obj in pairs(objects) do
         vim.keymap.set({ 'x', 'o' }, key, function()
-          select.select_textobject(obj, 'textobjects')
+          if not has_textobjects() then return end
+          pcall(select.select_textobject, obj, 'textobjects')
         end, { desc = 'textobject ' .. obj })
       end
 
@@ -666,7 +678,8 @@ require('lazy').setup({
       }
       for key, m in pairs(moves) do
         vim.keymap.set({ 'n', 'x', 'o' }, key, function()
-          move[m[1]](m[2], 'textobjects')
+          if not has_textobjects() then return end
+          pcall(move[m[1]], m[2], 'textobjects')
         end, { desc = m[3] })
       end
     end,
