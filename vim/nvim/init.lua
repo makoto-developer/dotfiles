@@ -235,13 +235,20 @@ vim.opt.rtp:prepend(lazypath)
 -- ================================================================
 require('lazy').setup({
 
-  -- カラースキーム
+  -- カラースキーム(真っ黒背景 + 高コントラスト)
   {
-    'ellisonleao/gruvbox.nvim',
+    'EdenEast/nightfox.nvim',
     priority = 1000,
     config = function()
-      vim.o.background = 'dark'
-      vim.cmd.colorscheme('gruvbox')
+      require('nightfox').setup({
+        palettes = {
+          carbonfox = {
+            bg0 = '#000000', -- 画面全体の背景を純黒に
+            bg1 = '#000000',
+          },
+        },
+      })
+      vim.cmd.colorscheme('carbonfox')
     end,
   },
 
