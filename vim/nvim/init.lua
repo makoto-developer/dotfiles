@@ -247,6 +247,12 @@ require('lazy').setup({
             bg1 = '#000000',
           },
         },
+        groups = {
+          carbonfox = {
+            -- 純黒同士だと境界が消えるので、ウィンドウの境界線をはっきりさせる
+            WinSeparator = { fg = '#5a5a5a' },
+          },
+        },
       })
       vim.cmd.colorscheme('carbonfox')
     end,
