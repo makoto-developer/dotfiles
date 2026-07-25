@@ -38,6 +38,8 @@ Masonが初回起動時に自動インストールする。`:Mason`で状態確�
 | Tailwind | tailwindcss(heexでもクラス名補完・色プレビューが効く) |
 | シェルスクリプト | bashls |
 | Dockerfile | dockerls |
+| Protocol Buffers | protols(message定義へのジャンプ・import解決) |
+| GraphQL | graphql(federationのスキーマ含む) |
 | Markdown | marksman(記事間のリンク補完・見出しジャンプ) |
 | JSON / YAML | jsonls / yamlls |
 | Lua | lua_ls |

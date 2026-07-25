@@ -278,6 +278,8 @@ require('lazy').setup({
         'go', 'rust', 'lua', 'vim', 'vimdoc',
         'json', 'yaml', 'toml', 'markdown', 'markdown_inline',
         'bash', 'html', 'css', 'sql', 'terraform', 'dockerfile',
+        -- マイクロサービス関連
+        'proto', 'graphql', 'gomod', 'gosum', 'gowork', 'make',
       })
       -- ファイルを開いたらtreesitterハイライトを有効化(パーサがあれば)
       vim.api.nvim_create_autocmd('FileType', {
@@ -309,6 +311,8 @@ require('lazy').setup({
             'bashls',          -- シェルスクリプト(deploy.sh等)
             'dockerls',        -- Dockerfile
             'marksman',        -- Markdown(記事間のリンク補完・見出しジャンプ)
+            'protols',         -- Protocol Buffers(message定義へのジャンプ・import解決)
+            'graphql',         -- GraphQL(federationのスキーマ含む)
             'jsonls', 'yamlls',
           },
         },

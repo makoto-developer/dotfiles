@@ -188,6 +188,11 @@ ln -sn ~/dotfiles/claude/skills ~/.claude/skills
 
 - `/claude-md-init` — マイクロサービス群のルートで実行すると、配下のリポジトリを調査して
   CLAUDE.md(サービスマップ)を生成する
+- `/go-workspace` — 複数のGoモジュールをgo.workで統合し、goplsを1インスタンスに。
+  サービス横断の定義ジャンプが通るようになる
+- `/trace-flow` — RPC名・GraphQLクエリ名を指定すると、proto定義からgateway・実装サービス・
+  下流呼び出しまでを追跡してフロー図とファイルパスで示す
+- `/retro` — git履歴とセッションログから週次の振り返りネタを生成する
 
 ※`~/.claude/settings.json`はツール(orca等)が自動管理するためdotfilesには含めない
 
