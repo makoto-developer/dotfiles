@@ -920,9 +920,20 @@ require('lazy').setup({
       { '<leader>e', '<Cmd>NvimTreeToggle<CR>', desc = 'ファイルツリー' },
     },
     config = function()
+      local api = require('nvim-tree.api')
       require('nvim-tree').setup({
         -- 開いているファイルにツリーを自動で追従・ハイライトする
         update_focused_file = { enable = true },
+        -- ※ツリーのバッファローカルマップはグローバルより優先され、しかも完全一致した時点で
+        --   即発火する(sを押した瞬間に確定し、sfのような長いグローバルマップを待たない)。
+        --   そのためグローバル側と衝突するキーだけ外して、通常バッファと同じ操作感にする。
+        on_attach = function(bufnr)
+          api.map.on_attach.default(bufnr)
+          -- s=既定アプリで開く / <C-k>=情報ポップアップ。前者はsプレフィックス25個、後者はウィンドウ移動を潰す
+          for _, lhs in ipairs({ 's', '<C-k>' }) do
+            pcall(vim.keymap.del, 'n', lhs, { buffer = bufnr })
+          end
+        end,
       })
       -- 起動時にツリーを自動で開く(カーソルは開いたファイル側に残す)
       -- ※`nvim .`のようにディレクトリを渡すと、VimEnterの時点でnvim-treeが既にツリーを
