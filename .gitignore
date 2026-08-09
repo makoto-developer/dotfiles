@@ -33,6 +33,10 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Local shell config (secrets / machine-specific settings)
+.zshrc.local
+*.local.zsh
+
 # Personal git configs (managed separately)
 .git_user
 .git_github

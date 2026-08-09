@@ -44,7 +44,8 @@ if [ -e /opt/homebrew/share/zsh-completions ]; then
   fpath=(/opt/homebrew/share/zsh-completions $fpath)
 fi
 autoload -Uz compinit
-compinit -u
+# -i: group/other書き込み可の補完ディレクトリは読み込まない(-uは危険な方も全部読む)
+compinit -i
 
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # 小文字でも大文字にマッチさせる
 zstyle ':completion:*' list-colors ''               # 補完候補一覧をカラー表示
@@ -143,7 +144,8 @@ fi
 alias _="sudo"
 alias mk="mkdir"
 alias v='nvim'
-alias vi='vim'
+alias vi='nvim'
+alias vim='vim'
 alias grep='grep --color=auto'
 
 ## Library command
@@ -164,7 +166,6 @@ alias ....='cd ../../..'
 alias ..2='cd ../..'
 alias ..3='cd ../../..'
 alias ..4='cd ../../../..'
-alias gohome='cd ~'
 
 ## ls系
 alias l='ls -ltrG'
@@ -178,24 +179,38 @@ alias gfp="git fetch -p"
 alias ga="git add -A"
 alias gb="git branch"
 alias gs="git status"
-alias gpl="git pull"
 alias gcm="git commit -m"
-alias gps="git push"
-alias gco="git checkout"
-alias gcob="git checkout -b"
-alias gd="git diff"
 alias gitbranchnameclip="git branch --show-current | clip" # ブランチ名をクリップボードにコピー
 alias gbn=gitbranchnameclip
 alias gcl="git clean -fd"                                  # 未追跡のファイル/ディレクトリを一撃で削除する
 
 ## Jetbrains
-alias idea='open -na "IntelliJ IDEA.app" --args "$@"'
-alias webs='open -na "WebStorm.app" --args "$@"'
-alias rubym='open -na "RubyMine.app" --args "$@"'
-alias phps='open -na "PhpStorm.app" --args "$@"'
-alias goland='open -na "GoLand.app" --args "$@"'
-alias clion='open -na "CLion.app" --args "$@"'
-alias pych='open -na "PyCharm.app" --args "$@"'
+# open(1) は LaunchServices 経由の起動になり LANG/LC_ALL を引き継がない。
+# 環境変数なしで起動した IDE の launcher は日本語を含むパスの UTF-8 を復号できず、
+# "Cannot set current directory to ..." で起動に失敗する。
+# アプリのバイナリを直接叩いてシェルの環境をそのまま渡すことで回避する。
+_jetbrains() {
+  local app=$1 bin=$2 dir
+  shift 2
+  for dir in "$HOME/Applications" "/Applications"; do
+    if [[ -x "$dir/$app.app/Contents/MacOS/$bin" ]]; then
+      "$dir/$app.app/Contents/MacOS/$bin" "${@:-$PWD}" >/dev/null 2>&1 &!
+      return 0
+    fi
+  done
+  print -u2 "$app.app が見つかりません（~/Applications と /Applications を検索）"
+  return 1
+}
+
+alias idea='_jetbrains "IntelliJ IDEA" idea'
+alias webs='_jetbrains WebStorm webstorm'
+alias goland='_jetbrains GoLand goland'
+alias datagrip='_jetbrains DataGrip datagrip'
+alias rustrover='_jetbrains RustRover rustrover'
+alias rubym='_jetbrains RubyMine rubymine'
+alias phps='_jetbrains PhpStorm phpstorm'
+alias clion='_jetbrains CLion clion'
+alias pych='_jetbrains PyCharm pycharm'
 
 ## パスワードジェネレータ
 alias passgen='openssl rand -base64 16 | pbcopy'
@@ -271,3 +286,11 @@ fi
 if [ -e /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
+
+# ================================================================
+# ローカル設定
+# ================================================================
+# このリポジトリは公開しているため、APIキー等のシークレットとマシン固有の設定は
+# gitで追跡しない~/.zshrc.localに書く(.gitignoreで除外済み)
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
