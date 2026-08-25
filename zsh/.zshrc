@@ -24,6 +24,22 @@ setopt hist_ignore_all_dups          # 同じコマンドは履歴に重複さ�
 setopt extended_history              # 実行時刻・所要時間も履歴に記録
 setopt interactive_comments          # コマンドラインでも # 以降をコメントと見なす
 
+## シークレットらしい語を含む行は履歴ファイルに書かない
+# 先頭スペース(hist_ignore_space)は打ち忘れるので、パターンでも防ぐ。
+# ※メモリ上の履歴には残る(同一セッションでは↑で辿れる)ので完全な防止ではない。
+#   (#i)の大小無視はextended_globが要り、無いと黙って何もマッチしないため文字クラスで書く
+HISTORY_IGNORE="(*[Tt][Oo][Kk][Ee][Nn]*"
+HISTORY_IGNORE+="|*[Ss][Ee][Cc][Rr][Ee][Tt]*"
+HISTORY_IGNORE+="|*[Pp][Aa][Ss][Ss][Ww][Oo][Rr][Dd]*"
+HISTORY_IGNORE+="|*[Pp][Aa][Ss][Ss][Ww][Dd]*"
+HISTORY_IGNORE+="|*[Aa][Pp][Ii][Kk][Ee][Yy]*"
+HISTORY_IGNORE+="|*[Aa][Pp][Ii][-_][Kk][Ee][Yy]*"
+HISTORY_IGNORE+="|*[Cc][Rr][Ee][Dd][Ee][Nn][Tt][Ii][Aa][Ll]*"
+HISTORY_IGNORE+="|*[Pp][Aa][Ss][Ss][Pp][Hh][Rr][Aa][Ss][Ee]*"
+HISTORY_IGNORE+="|*[Aa][Cc][Cc][Ee][Ss][Ss][-_][Kk][Ee][Yy]*"
+HISTORY_IGNORE+="|*[Aa][Uu][Tt][Hh][Oo][Rr][Ii][Zz][Aa][Tt][Ii][Oo][Nn]:*"
+HISTORY_IGNORE+="|*[Pp][Rr][Ii][Vv][Aa][Tt][Ee][-_ ][Kk][Ee][Yy]*)"
+
 ## コマンドを途中まで入力後、Ctrl+p/nでhistoryから絞り込み
 autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
