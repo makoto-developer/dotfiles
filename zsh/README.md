@@ -1,7 +1,15 @@
 # zsh設定
 
-fishから戻ってきたので現役。設定は`.zshrc`の1ファイルのみ(旧`.zshrc.profile.*.zsh`は統合済み)。
-Prezto等のフレームワークは使わず軽量に保つ。プロンプトは組み込みの`vcs_info`でgitブランチを表示するだけ。
+fishから戻ってきたので現役。Prezto等のフレームワークは使わず軽量に保つ。
+プロンプトは組み込みの`vcs_info`でgitブランチを表示するだけ。
+
+| ファイル | 読まれるタイミング | 置くもの |
+|---|---|---|
+| `.zshenv` | 全てのzsh(非対話・`ssh host cmd`・cronから起動したzshを含む) | PATH・ロケール・`EDITOR`などの環境変数 |
+| `.zprofile` | ログインシェルで一度だけ | `/etc/zprofile`の`path_helper`が崩したPATHの優先順の復元 |
+| `.zshrc` | 対話シェル | `setopt`・`bindkey`・エイリアス・プロンプト・プラグイン |
+
+環境変数を`.zshrc`に置くと非対話シェルで効かないため、`.zshenv`と分けている。
 
 前提: リポジトリはghq管理下に置き、`~/dotfiles`はシンボリックリンクにする。
 
@@ -15,8 +23,14 @@ ln -s ~/work/github.com/makoto-developer/dotfiles ~/dotfiles
 
 ```shell
 mv ~/.zshrc ~/.zshrc.original 2>/dev/null
+mv ~/.zprofile ~/.zprofile.original 2>/dev/null
 ln -s ~/dotfiles/zsh/.zshrc ~/.zshrc
+ln -s ~/dotfiles/zsh/.zshenv ~/.zshenv
+ln -s ~/dotfiles/zsh/.zprofile ~/.zprofile
 ```
+
+APIキー等のシークレットとマシン固有の設定は、gitで追跡しない`~/.zshrc.local`に書く
+(`.zshrc`の最後で読み込む。`.gitignore`で除外済み)。
 
 反映
 
@@ -27,10 +41,16 @@ exec zsh
 ## キーバインド・コマンド
 
 - `Ctrl + g` — ghq管理下のリポジトリをfzfで検索して移動
-- `Ctrl + r` — hstrでコマンド履歴を検索
+- `Ctrl + r` — hstrでコマンド履歴を検索(打ちかけの行は退避され、終了後のプロンプトに戻る)
 - `Ctrl + p` / `Ctrl + n` — 入力途中の文字列でhistoryを前方/後方検索
 - `z <名前の一部>` — 頻出ディレクトリへジャンプ(zoxide)。`zi`で一覧から選択
+- `repos` — カレントディレクトリ直下の全gitリポジトリのstatusを一覧
+- `gcl` / `gclf` — 未追跡ファイルの削除。`gcl`はdry-run、実際に消すのは`gclf`
 
 ## 中身の構成(.zshrc内のセクション)
 
-PATH / 言語 / 履歴 / 補完 / プロンプト / ツール連携(mise, ghq+fzf, ghq+peco, hstr, golang, libpq) / エイリアス / iTerm2連携
+Homebrew / 履歴 / 色 / 補完 / ディレクトリ移動 / プロンプト /
+ツール連携(mise, ghq+fzf, repos, zoxide, hstr) / エイリアス / iTerm2連携 /
+プラグイン(zsh-autosuggestions) / ローカル設定 / コマンドの色付け(zsh-syntax-highlighting)
+
+`zsh-syntax-highlighting`は他のzle widgetを拾うため、必ず最後に読み込む。

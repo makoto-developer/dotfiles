@@ -3,28 +3,22 @@
 # 方針: プラグインマネージャ・フレームワーク(Prezto等)は使わず軽量に保つ
 
 # ================================================================
-# PATH
+# Homebrew
 # ================================================================
-typeset -U path PATH                  # PATHの重複エントリを自動で除去
-# Homebrewを先頭に(これが無いとApple版gitが/opt/homebrew/binのgitより優先されてしまう)
+# PATH・ロケール・EDITORは非対話シェルでも要るので.zshenvに置いた。
+# ここで再度呼ぶのはFPATH(補完)とHOMEBREW_PREFIX等を入れるためと、
+# path_helperが並べ替えたPATHの順序を戻すため。
 eval "$(/opt/homebrew/bin/brew shellenv)"
-export PATH="$HOME/.local/bin:$PATH"  # claude等のネイティブインストーラ系
-
-# ================================================================
-# 言語
-# ================================================================
-export LANG=ja_JP.UTF-8
-export LC_ALL=ja_JP.UTF-8
+path=("$HOME/.local/bin" $path)        # shellenv内のpath_helperに後ろへ回されるので先頭に戻す
 
 # ================================================================
 # 履歴
 # ================================================================
-export HISTFILE=${HOME}/.zsh_history # 履歴ファイルの保存先
-export HISTSIZE=100000               # メモリに保存される履歴の件数(SAVEHISTと揃える)
-export SAVEHIST=100000               # 履歴ファイルに保存される履歴の件数
+HISTFILE=${HOME}/.zsh_history        # 履歴ファイルの保存先(zsh内部変数なのでexportしない)
+HISTSIZE=100000                      # メモリに保存される履歴の件数(SAVEHISTと揃える)
+SAVEHIST=100000                      # 履歴ファイルに保存される履歴の件数
 setopt share_history                 # 同時に起動したzshの間でヒストリを共有
 setopt hist_reduce_blanks            # 余分な空白は詰めて記録
-setopt hist_expand                   # 補完時にヒストリを自動的に展開
 setopt hist_ignore_space             # 先頭スペースのコマンドは履歴に残さない
 setopt hist_ignore_all_dups          # 同じコマンドは履歴に重複させない
 setopt extended_history              # 実行時刻・所要時間も履歴に記録
@@ -38,17 +32,22 @@ bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
 # ================================================================
+# 色 (LS_COLORSは下の補完のlist-colorsが参照するので、補完より先に定義する)
+# ================================================================
+export CLICOLOR=1
+export LSCOLORS="GxFxCxDxBxegedabagaced" # BSD ls用
+export LS_COLORS='di=33:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:' # zsh補完/GNU ls用
+
+# ================================================================
 # 補完
 # ================================================================
-if [ -e /opt/homebrew/share/zsh-completions ]; then
-  fpath=(/opt/homebrew/share/zsh-completions $fpath)
-fi
+# brewの補完(site-functions)は上のbrew shellenvがfpathに入れてくれる
 autoload -Uz compinit
 # -i: group/other書き込み可の補完ディレクトリは読み込まない(-uは危険な方も全部読む)
 compinit -i
 
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # 小文字でも大文字にマッチさせる
-zstyle ':completion:*' list-colors ''               # 補完候補一覧をカラー表示
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # 大文字小文字を区別せずマッチさせる
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS} # 補完候補をlsと同じ色分けで表示
 setopt list_packed                                  # 補完候補を詰めて表示
 setopt no_beep                                      # ビープ音消去
 
@@ -62,10 +61,10 @@ setopt pushd_ignore_dups             # 移動履歴の重複は積まない
 # ================================================================
 # プロンプト (Prezto/agnosterは廃止。gitブランチ表示だけの軽量構成)
 # ================================================================
-autoload -Uz vcs_info
+autoload -Uz vcs_info add-zsh-hook
 zstyle ':vcs_info:git:*' formats ' %F{magenta}(%b)%f'
 zstyle ':vcs_info:git:*' actionformats ' %F{red}(%b|%a)%f'
-precmd() { vcs_info }
+add-zsh-hook precmd vcs_info         # precmd()を直接定義すると同名を定義する他ツールと潰し合う
 setopt prompt_subst
 PROMPT='%F{cyan}%~%f${vcs_info_msg_0_} %(?.%F{green}.%F{red})❯%f '
 
@@ -88,7 +87,7 @@ function ghq-fzf() {
     } | fzf --reverse --prompt="repo > " --delimiter=$'\t' --with-nth=1 --preview 'ls -1 {2}' | cut -f2
   )
   if [ -n "$selected" ]; then
-    BUFFER="cd ${selected}"
+    BUFFER="cd ${(q)selected}"        # スペースを含むパスでcdが壊れないようクォートする
     zle accept-line
   fi
   zle reset-prompt
@@ -99,12 +98,14 @@ bindkey '^g' ghq-fzf
 ## repos: 配下の全gitリポジトリのstatusを一覧(マルチリポジトリの俯瞰用)
 function repos() {
   local dir st dirty
-  for dir in */.git(N/); do
+  local -a lines
+  for dir in */.git(N); do            # worktree/submoduleの.gitはファイルなので(N/)で絞らない
     dir=${dir%/.git}
-    st=$(git -C "$dir" status -sb 2>/dev/null | head -1)
-    dirty=$(git -C "$dir" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+    lines=(${(f)"$(git -C "$dir" status -sb 2>/dev/null)"}) || continue
+    st=${lines[1]}                    # -sbの1行目がブランチ行
+    dirty=$(( ${#lines} - 1 ))        # 残りの行数が変更ファイル数
     printf '%-36s %s' "$dir" "$st"
-    [ "$dirty" != "0" ] && printf '  [変更%s件]' "$dirty"
+    (( dirty > 0 )) && printf '  [変更%s件]' "$dirty"
     printf '\n'
   done
 }
@@ -118,41 +119,25 @@ fi
 if command -v hstr >/dev/null; then
   alias hh=hstr
   export HSTR_CONFIG=hicolor
-  bindkey -s "\C-r" "\C-a hstr -- \C-j"
-fi
-
-## golang
-# ※goの有無で分岐しない(miseのPATH注入は最初のプロンプト表示時なので、.zshrc実行中はgoが見えない)
-export GOPATH=$HOME/opt/go
-mkdir -p $GOPATH
-export PATH="$PATH:$GOPATH/bin"
-
-## nvim
-export XDG_CONFIG_HOME="$HOME/.config"
-export EDITOR=nvim                   # git commit等で使うエディタ
-
-## postgresql client (libpq)
-if [ -d /opt/homebrew/opt/libpq ]; then
-  export LDFLAGS="-L/opt/homebrew/opt/libpq/lib"
-  export CPPFLAGS="-I/opt/homebrew/opt/libpq/include"
+  # bindkey -s だと打ちかけの入力がhstrの引数として実行されるので、push-lineで退避する
+  hstr-widget() { zle push-line; BUFFER=' hstr --'; zle accept-line }  # 先頭スペースで履歴に残さない
+  zle -N hstr-widget
+  bindkey '^r' hstr-widget
 fi
 
 # ================================================================
 # エイリアス
 # ================================================================
 ## base command
-alias _="sudo"
+alias _='sudo '                      # 末尾スペースで次の語もエイリアス展開させる
 alias mk="mkdir"
 alias v='nvim'
 alias vi='nvim'
-alias vim='vim'
 alias grep='grep --color=auto'
 
 ## Library command
 alias nv='nvim'
 alias el="elixir"
-alias iex="iex" # 省略しない
-alias erl="erl" # 省略しない
 alias n="npm"
 alias k="kubectl"
 alias dr="docker"
@@ -182,7 +167,8 @@ alias gs="git status"
 alias gcm="git commit -m"
 alias gitbranchnameclip="git branch --show-current | clip" # ブランチ名をクリップボードにコピー
 alias gbn=gitbranchnameclip
-alias gcl="git clean -fd"                                  # 未追跡のファイル/ディレクトリを一撃で削除する
+alias gcl="git clean -nd"                                  # 消える対象を確認するだけ(dry-run)
+alias gclf="git clean -fd"                                 # 実際に削除する。復元できないのでgclで確認してから
 
 ## Jetbrains
 # open(1) は LaunchServices 経由の起動になり LANG/LC_ALL を引き継がない。
@@ -213,13 +199,20 @@ alias clion='_jetbrains CLion clion'
 alias pych='_jetbrains PyCharm pycharm'
 
 ## パスワードジェネレータ
-alias passgen='openssl rand -base64 16 | pbcopy'
-alias passgenweak='openssl rand -hex 8 | pbcopy'
+# pipefailが無いとopensslの失敗をpbcopyの成功が隠し、空をコピーしたまま成功と表示される
+passgen() {
+  setopt localoptions pipefail
+  openssl rand -base64 16 | pbcopy && echo "パスワードをクリップボードにコピーしました"
+}
+passgenweak() {
+  setopt localoptions pipefail
+  openssl rand -hex 8 | pbcopy && echo "パスワード(弱)をクリップボードにコピーしました"
+}
 alias passgenw=passgenweak
 
 ## その他
 alias myip="curl https://ipinfo.io/json"    # ipアドレスを取得
-alias myhttp="ruby -run -e httpd . -p 8000" # カレントディレクトリを基準にHTTPサーバを起動
+alias myhttp="ruby -run -e httpd . -p 8000 --bind-address=127.0.0.1" # カレントディレクトリを配信(LANに露出しないようloopback限定)
 
 ## コマンドで話す
 ### WARNING! 音声を予めダウンロードしておく
@@ -230,13 +223,9 @@ alias kyoko='say -v Kyoko -r 200 -i '
 # ================================================================
 # iTerm2
 # ================================================================
-export CLICOLOR=1
-export LSCOLORS="GxFxCxDxBxegedabagaced"
-export LS_COLORS='di=33;:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
-
 ## itermのタブに名前をつける
 function tab() {
-  echo -ne "\e]1;$@ \a"
+  printf '\e]1;%s \a' "$*"
 }
 
 ## itermのタブのカラーを変更する
@@ -281,16 +270,18 @@ if [ -e /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
-## コマンドの色付け(存在しないコマンドは赤く表示)
-# ※.zshrcの最後でsourceする必要がある
-if [ -e /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
 # ================================================================
 # ローカル設定
 # ================================================================
 # このリポジトリは公開しているため、APIキー等のシークレットとマシン固有の設定は
 # gitで追跡しない~/.zshrc.localに書く(.gitignoreで除外済み)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# ================================================================
+# コマンドの色付け (存在しないコマンドは赤く表示)
+# ================================================================
+# ※.zshrc.localで定義したbindkey/zle widgetも拾えるよう、必ず最後にsourceする
+if [ -e /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
