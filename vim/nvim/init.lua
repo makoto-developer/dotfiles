@@ -35,6 +35,17 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold' }, {
     if vim.fn.getcmdwintype() == '' then pcall(vim.cmd, 'checktime') end
   end,
 })
+-- 既定の4秒ではAIの書き換えに気付くのが遅い(CursorHoldの発火間隔。vim-illuminateの反応も速くなる)
+opt.updatetime = 300
+-- 黙って読み直すと、見ていたコードがいつAIに変えられたか分からなくなるので通知する
+vim.api.nvim_create_autocmd('FileChangedShellPost', {
+  callback = function(ev)
+    vim.notify('外部で変更されたので再読込: ' .. vim.fn.fnamemodify(ev.file, ':~:.'), vim.log.levels.WARN)
+  end,
+})
+
+-- diff表示: 行内の変更を単語単位で強調し、AIの大きな書き換えでも対応行がずれにくいhistogramを使う
+opt.diffopt = 'internal,filler,closeoff,indent-heuristic,inline:word,linematch:60,algorithm:histogram'
 
 -- Undoをファイルが閉じても戻れるように(undodirはnvimのデフォルトを使う)
 opt.undofile = true
@@ -542,6 +553,8 @@ require('lazy').setup({
       { '<leader>fb', '<Cmd>Telescope buffers<CR>',    desc = 'バッファ一覧' },
       { '<leader>fh', '<Cmd>Telescope oldfiles<CR>',   desc = '最近開いたファイル' },
       { '<leader>fs', '<Cmd>Telescope lsp_dynamic_workspace_symbols<CR>', desc = 'シンボル検索(関数・型名でジャンプ)' },
+      -- AIの変更で壊れた箇所を開いている全ファイルから拾う([d ]dは今のファイル内のみ)
+      { '<leader>fd', '<Cmd>Telescope diagnostics<CR>', desc = '診断(エラー・警告)一覧' },
       -- IntelliJ風(OS/orca/iTermと競合しない検索・ジャンプ系のみ)
       { '<D-S-o>', '<Cmd>Telescope find_files<CR>',    desc = 'ファイル名でジャンプ(IntelliJ風)' },
       { '<D-o>',   '<Cmd>Telescope lsp_dynamic_workspace_symbols<CR>', desc = 'シンボル検索(IntelliJ風)' },
@@ -583,6 +596,9 @@ require('lazy').setup({
     cmd = { 'DiffviewOpen', 'DiffviewFileHistory', 'DiffviewClose' },
     keys = {
       { 'sD', '<Cmd>DiffviewOpen<CR>', desc = 'diffビューア(Diff。閉じるは:DiffviewClose)' },
+      -- AIエージェントがブランチで積んだコミットをまとめてレビューする
+      { '<leader>gm', '<Cmd>DiffviewOpen origin/HEAD...HEAD<CR>', desc = 'ブランチの差分(デフォルトブランチとの比較)' },
+      { '<leader>gh', '<Cmd>DiffviewFileHistory %<CR>', desc = '今のファイルの変更履歴' },
     },
   },
 
@@ -615,14 +631,45 @@ require('lazy').setup({
   },
 
   -- Claude CodeのIDE統合(nvim内でclaudeを開く・選択範囲を渡す・変更提案をdiffで確認)
+  -- 起動時に読み込む: IDE用サーバが立っていないと、外(orca等)で動くclaudeから/ideで接続できないため
   {
     'coder/claudecode.nvim',
-    cmd = { 'ClaudeCode', 'ClaudeCodeFocus', 'ClaudeCodeSend' },
+    event = 'VeryLazy',
     keys = {
       { 'sc', '<Cmd>ClaudeCode<CR>', desc = 'Claudeをトグル(claude)' },
       { 'sc', '<Cmd>ClaudeCodeSend<CR>', mode = 'x', desc = '選択範囲をClaudeへ送る' },
+      {
+        '<leader>ab',
+        function()
+          vim.cmd(vim.bo.filetype == 'NvimTree' and 'ClaudeCodeTreeAdd' or 'ClaudeCodeAdd %')
+        end,
+        desc = '今のファイル(ツリーではカーソル下)をClaudeの文脈に追加',
+      },
+      { '<leader>ar', '<Cmd>ClaudeCode --resume<CR>', desc = 'Claudeの過去セッションを選んで再開' },
+      { '<leader>aC', '<Cmd>ClaudeCode --continue<CR>', desc = 'Claudeの直前のセッションを続ける' },
+      -- Claudeが出した変更提案のdiffを採用/却下(yes/no)
+      { '<leader>ay', '<Cmd>ClaudeCodeDiffAccept<CR>', desc = 'Claudeの変更提案を採用' },
+      { '<leader>an', '<Cmd>ClaudeCodeDiffDeny<CR>', desc = 'Claudeの変更提案を却下' },
     },
     opts = {},
+  },
+
+  -- Claude以外のAI CLI(codex/gemini等)をnvim内のターミナルで開き、ファイル・選択範囲・診断を渡す
+  -- ClaudeはIDE統合(diff提案・選択範囲の自動共有)があるclaudecode.nvimを使い、こちらは使い分ける
+  {
+    'folke/sidekick.nvim',
+    -- NES(次の編集の提案)はCopilotの契約が必要なので無効にし、CLI連携だけ使う
+    opts = { nes = { enabled = false } },
+    keys = {
+      { '<leader>ax', function() require('sidekick.cli').toggle({ name = 'codex', focus = true }) end, desc = 'Codexをトグル' },
+      { '<leader>ag', function() require('sidekick.cli').toggle({ name = 'gemini', focus = true }) end, desc = 'Geminiをトグル' },
+      { '<leader>as', function() require('sidekick.cli').select() end, desc = 'AI CLIを選んで開く' },
+      { '<leader>at', function() require('sidekick.cli').send({ msg = '{this}' }) end, mode = { 'n', 'x' }, desc = 'カーソル位置/選択範囲をAI CLIへ送る' },
+      { '<leader>af', function() require('sidekick.cli').send({ msg = '{file}' }) end, desc = '今のファイルをAI CLIへ送る' },
+      { '<leader>ap', function() require('sidekick.cli').prompt() end, mode = { 'n', 'x' }, desc = '定型プロンプト(説明・レビュー・診断修正等)を選んで送る' },
+      -- ターミナル内ではCtrl+hjklがCLI側に取られるため、エディタとの行き来はこれで行う
+      { '<C-.>', function() require('sidekick.cli').focus() end, mode = { 'n', 't', 'i', 'x' }, desc = 'AI CLIとエディタを行き来' },
+    },
   },
 
   -- カーソル下のシンボルの出現箇所を自動ハイライト(IntelliJが標準でやること)
@@ -708,6 +755,7 @@ require('lazy').setup({
         { '<leader>t', group = 'テスト' },
         { '<leader>f', group = 'ファイル・検索' },
         { '<leader>d', group = 'デバッグ・削除' },
+        { '<leader>a', group = 'AI' },
       },
     },
     keys = {
@@ -987,6 +1035,7 @@ require('lazy').setup({
       on_attach = function(bufnr)
         local gs = require('gitsigns')
         local o = { buffer = bufnr }
+        local function d(desc) return { buffer = bufnr, desc = desc } end
         -- 変更箇所(hunk)間をジャンプ
         vim.keymap.set('n', ']c', function()
           if vim.wo.diff then vim.cmd.normal({ ']c', bang = true }) else gs.nav_hunk('next') end
@@ -995,9 +1044,25 @@ require('lazy').setup({
           if vim.wo.diff then vim.cmd.normal({ '[c', bang = true }) else gs.nav_hunk('prev') end
         end, o)
         -- 変更前とのdiffをその場でポップアップ
-        vim.keymap.set('n', '<leader>gp', gs.preview_hunk, o)
+        vim.keymap.set('n', '<leader>gp', gs.preview_hunk, d('変更前とのdiffをポップアップ'))
         -- カーソル行のblame(誰がいつなぜ変えたか)
-        vim.keymap.set('n', '<leader>gb', function() gs.blame_line({ full = true }) end, o)
+        vim.keymap.set('n', '<leader>gb', function() gs.blame_line({ full = true }) end, d('カーソル行のblame'))
+        -- AIの変更をhunk単位で採用(stage)/破棄(reset)する。選択範囲なら行単位
+        local function sel() return { vim.fn.line('.'), vim.fn.line('v') } end
+        vim.keymap.set('n', '<leader>ga', gs.stage_hunk, d('hunkを採用(stage)'))
+        vim.keymap.set('n', '<leader>gr', gs.reset_hunk, d('hunkを破棄(reset)'))
+        vim.keymap.set('x', '<leader>ga', function() gs.stage_hunk(sel()) end, d('選択行を採用(stage)'))
+        vim.keymap.set('x', '<leader>gr', function() gs.reset_hunk(sel()) end, d('選択行を破棄(reset)'))
+        vim.keymap.set('n', '<leader>gA', gs.stage_buffer, d('ファイル全体を採用(stage)'))
+        vim.keymap.set('n', '<leader>gR', gs.reset_buffer, d('ファイル全体を破棄(reset)'))
+        -- 全ファイルの変更hunkをquickfixへ(:cnextで巡回しながら読む)
+        vim.keymap.set('n', '<leader>gq', function() gs.setqflist('all') end, d('全ファイルの変更hunkをquickfixへ'))
+        -- 変更前の行をその場に重ねて表示(gpのポップアップと違い、前後の文脈と並べて読める)
+        vim.keymap.set('n', '<leader>gi', gs.preview_hunk_inline, d('変更前の行をその場に表示'))
+        -- 追加行の中で変わった単語だけを強調
+        vim.keymap.set('n', '<leader>gw', gs.toggle_word_diff, d('単語単位の差分強調を切替'))
+        -- ih = hunkのtextobject(vihで選択、dihで削除)
+        vim.keymap.set({ 'o', 'x' }, 'ih', gs.select_hunk, d('hunkを選択'))
       end,
     },
   },

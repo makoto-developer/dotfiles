@@ -57,6 +57,10 @@ Masonが初回起動時に自動インストールする。`:Mason`で状態確�
 
 ## キーマップ一覧
 
+**キーを忘れたら**: `s`や`Space`を押して0.5秒待つと続きのキーと説明が出る(which-key)。
+`s:`でキーマップを説明文から検索できる。AI関連は`Space a`、git・レビューは`Space g`にまとまっている
+(一覧は下の「AI(Claude / Codex / Gemini)」「git・ファイルツリー・レビュー」の表)。
+
 メインは**`s`プレフィックス**(sは上書きしてよいルール。標準のs=1文字置換は`cl`で代用)。
 2ストロークで押せて、OS・アプリ(orca等)・iTermと絶対に競合しない。
 IntelliJの機能名の頭文字で覚える。IntelliJ風(Cmd系)・vim標準・Space系も併用できる。
@@ -123,10 +127,42 @@ IntelliJの機能名の頭文字で覚える。IntelliJ風(Cmd系)・vim標準�
 | git変更ファイル一覧 | `Space gs` | **s**tatus(レビュー開始の起点) |
 | 変更箇所(hunk)間をジャンプ | `]c` / `[c` | **c**hange |
 | 変更前とのdiffをポップアップ | `Space gp` | **p**review |
+| 変更前の行をその場に重ねて表示 | `Space gi` | **i**nline |
+| 追加行の中で変わった単語を強調(トグル) | `Space gw` | **w**ord |
+| hunkを採用(stage) / 破棄(reset) | `Space ga` / `Space gr` | **a**dd / **r**eset。選択範囲なら行単位 |
+| ファイル全体を採用 / 破棄 | `Space gA` / `Space gR` | |
+| 全ファイルの変更hunkをquickfixへ | `Space gq` | `:cnext`で巡回しながら読む |
+| hunkを選択(textobject) | `vih` / `dih` | **h**unk |
+| ブランチの差分(デフォルトブランチとの比較) | `Space gm` | **m**ain。`origin/HEAD...HEAD`をdiffviewで開く |
+| 今のファイルの変更履歴 | `Space gh` | **h**istory |
+| 診断(エラー・警告)一覧 | `Space fd` | **d**iagnostics |
 | カーソル行のblame | `Space gb` | **b**lame |
 | git blame(ファイル全体) / 差分 | `:Git blame` / `:Gdiffsplit` | fugitive |
 | TODO/FIXME一覧(プロジェクト横断) | `sT` | **T**ODO |
-| Claude Codeをトグル(選択範囲を送るのはビジュアルモードで`sc`) | `sc` | **c**laude |
+
+### AI(Claude / Codex / Gemini)
+
+Claudeは`claudecode.nvim`(IDE統合)、Codex・GeminiなどはCLIを`sidekick.nvim`のターミナルで開く。
+IDE統合があるのはClaudeだけで、変更提案をdiffで出して採用/却下できる。今開いている選択範囲も自動でClaudeに渡る。
+
+| 操作 | キー | 備考 |
+|------|------|------|
+| Claudeをトグル | `sc` | ビジュアルモードの`sc`は選択範囲を送る |
+| 今のファイルをClaudeの文脈に追加 | `Space ab` | ファイルツリー内ではカーソル下のファイル |
+| Claudeの変更提案を採用 / 却下 | `Space ay` / `Space an` | **y**es / **n**o |
+| Claudeのセッションを選んで再開 / 直前を続ける | `Space ar` / `Space aC` | |
+| Codex / Geminiをトグル | `Space ax` / `Space ag` | |
+| AI CLIを選んで開く | `Space as` | インストール済みのものから選ぶ |
+| カーソル位置・選択範囲 / ファイルをAI CLIへ送る | `Space at` / `Space af` | |
+| 定型プロンプトを選んで送る | `Space ap` | 説明・レビュー・診断の修正など |
+| AI CLIとエディタを行き来 | `Ctrl+.` | ターミナル内でも効く(kittyキーボードプロトコルが必要) |
+
+- **外で動かしているclaude(orcaのセッション等)からも接続できる**。nvimを先に起動しておき、claude側で`/ide`を実行する
+- **AIがファイルを書き換えると自動で読み直し、通知が出る**。通知に気付いたら`Space gi`/`]c`で何が変わったかを見る
+- AIの変更を読むときの流れ: `Space gq`で変更hunkを一覧 → `]c`で巡回 → `Space ga`で採用 / `Space gr`で破棄。
+  コミット済みなら`Space gm`でブランチ全体の差分をdiffviewで読む
+- DevinはIDE統合がない。DevinのPRレビューコメントは`sP`(octo.nvim)でnvim内から読める
+- `:checkhealth sidekick`のCopilot・tmuxのERRORは無視してよい(NESとマルチプレクサは使っていない)
 
 ### テスト・デバッグ
 
