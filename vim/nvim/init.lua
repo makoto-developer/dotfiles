@@ -751,7 +751,29 @@ require('lazy').setup({
   {
     'MeanderingProgrammer/render-markdown.nvim',
     ft = { 'markdown' },
-    opts = {},
+    opts = {
+      heading = {
+        -- 既定の󰲡󰲣󰲥(丸数字風アイコン)はレベルが読み取りにくいので生の'#'に戻す
+        icons = { '# ', '## ', '### ', '#### ', '##### ', '###### ' },
+        sign = false,
+        -- 行全体の背景ブロックをやめ、見出しの階層は下のRenderMarkdownHnの文字色だけで示す
+        backgrounds = {},
+      },
+    },
+    config = function(_, opts)
+      require('render-markdown').setup(opts)
+
+      -- ターミナルでは文字サイズを変えられないため、見出しの大小は色の明暗と太字で代用する
+      local heading_fg = { '#f9fbff', '#78a9ff', '#33b1ff', '#be95ff', '#25be6a', '#7b7c7e' }
+      local function set_heading_hl()
+        for level, fg in ipairs(heading_fg) do
+          vim.api.nvim_set_hl(0, 'RenderMarkdownH' .. level, { fg = fg, bold = true })
+        end
+      end
+      set_heading_hl()
+      -- カラースキーム再適用でハイライトがクリアされるため張り直す
+      vim.api.nvim_create_autocmd('ColorScheme', { callback = set_heading_hl })
+    end,
     keys = {
       { 'sm', '<Cmd>RenderMarkdown buf_toggle<CR>', ft = 'markdown', desc = 'Markdown装飾のON/OFF(Markdown)' },
       { 'sM', '<Cmd>RenderMarkdown preview<CR>', ft = 'markdown', desc = 'Markdownを横に並べてプレビュー(Markdown)' },
