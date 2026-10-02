@@ -5,11 +5,10 @@
 # ================================================================
 # Homebrew
 # ================================================================
-# PATH・ロケール・EDITORは非対話シェルでも要るので.zshenvに置いた。
-# ここで再度呼ぶのはFPATH(補完)とHOMEBREW_PREFIX等を入れるためと、
-# path_helperが並べ替えたPATHの順序を戻すため。
-eval "$(/opt/homebrew/bin/brew shellenv)"
-path=("$HOME/.local/bin" $path)        # shellenv内のpath_helperに後ろへ回されるので先頭に戻す
+# PATHは.zshenv/.zprofileが持つので、brew shellenvのうち対話時に要る分だけをforkせずに入れる
+export HOMEBREW_PREFIX=/opt/homebrew HOMEBREW_CELLAR=/opt/homebrew/Cellar HOMEBREW_REPOSITORY=/opt/homebrew
+typeset -U fpath                     # Homebrew版zshは元からsite-functionsを持つので重複させない
+fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 
 # ================================================================
 # 履歴
@@ -22,6 +21,7 @@ setopt hist_reduce_blanks            # 余分な空白は詰めて記録
 setopt hist_ignore_space             # 先頭スペースのコマンドは履歴に残さない
 setopt hist_ignore_all_dups          # 同じコマンドは履歴に重複させない
 setopt extended_history              # 実行時刻・所要時間も履歴に記録
+setopt hist_verify                   # !!や!$は展開結果を行に置くだけにし、確認してから実行する
 setopt interactive_comments          # コマンドラインでも # 以降をコメントと見なす
 
 ## シークレットらしい語を含む行は履歴ファイルに書かない
@@ -47,12 +47,19 @@ zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
+## Ctrl+x Ctrl+e で入力中のコマンドを$EDITORで編集
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
+WORDCHARS=${WORDCHARS//\/}           # /を単語の区切りにし、Ctrl+wでパスを1階層ずつ消す
+
 # ================================================================
 # 色 (LS_COLORSは下の補完のlist-colorsが参照するので、補完より先に定義する)
 # ================================================================
 export CLICOLOR=1
 export LSCOLORS="GxFxCxDxBxegedabagaced" # BSD ls用
-export LS_COLORS='di=33:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:' # zsh補完/GNU ls用
+export LS_COLORS='di=1;36:ln=1;35:so=1;32:pi=1;33:ex=1;31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;43' # zsh補完/GNU ls用(LSCOLORSと同じ配色)
 
 # ================================================================
 # 補完
@@ -62,10 +69,28 @@ autoload -Uz compinit
 # -i: group/other書き込み可の補完ディレクトリは読み込まない(-uは危険な方も全部読む)
 compinit -i
 
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # 大文字小文字を区別せずマッチさせる
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' # 大小無視、ダメならf.b→foo.barのような区切り補完
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS} # 補完候補をlsと同じ色分けで表示
+zstyle ':completion:*' use-cache on                 # brew/pip等の重い補完結果をキャッシュする
+zstyle ':completion:*' group-name ''                # 候補を種類ごとにまとめる
+zstyle ':completion:*:descriptions' format '[%d]'   # fzf-tabは色エスケープを無視するので素の文字列にする
 setopt list_packed                                  # 補完候補を詰めて表示
 setopt no_beep                                      # ビープ音消去
+
+## fzf: Ctrl+tでファイル、Alt+cでディレクトリを選択、**<Tab>でfzf補完
+# Ctrl+rはhstrを使うので空にして取らせない
+if command -v fzf >/dev/null; then
+  FZF_CTRL_R_COMMAND= source <(fzf --zsh)
+fi
+
+## fzf-tab: Tab補完の候補選択をfzfにする (brew install fzf-tab)
+# fzfの**補完より後(直前の^Iを引き継ぐため)、autosuggestions等のwidgetラッパーより前に読む
+if [ -e /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh ]; then
+  source /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh
+  zstyle ':completion:*' menu no                    # 標準の選択メニューを出さずfzf-tabに任せる
+  zstyle ':fzf-tab:complete:cd:*' fzf-preview 'CLICOLOR_FORCE=1 ls -1G $realpath' # BSD lsは端末以外へは色を付けない
+  zstyle ':fzf-tab:*' switch-group '<' '>'          # 種類(グループ)を<>で切り替える
+fi
 
 # ================================================================
 # ディレクトリ移動
@@ -152,7 +177,6 @@ alias vi='nvim'
 alias grep='grep --color=auto'
 
 ## Library command
-alias nv='nvim'
 alias el="elixir"
 alias n="npm"
 alias k="kubectl"
@@ -164,9 +188,6 @@ alias fz='fzf'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias ..2='cd ../..'
-alias ..3='cd ../../..'
-alias ..4='cd ../../../..'
 
 ## ls系
 alias l='ls -ltrG'
@@ -228,7 +249,7 @@ alias passgenw=passgenweak
 
 ## その他
 alias myip="curl https://ipinfo.io/json"    # ipアドレスを取得
-alias myhttp="ruby -run -e httpd . -p 8000 --bind-address=127.0.0.1" # カレントディレクトリを配信(LANに露出しないようloopback限定)
+alias myhttp="python3 -m http.server 8000 --bind 127.0.0.1" # カレントディレクトリを配信(LANに露出しないようloopback限定)
 
 ## コマンドで話す
 ### WARNING! 音声を予めダウンロードしておく
@@ -282,6 +303,7 @@ fi
 # プラグイン (brew install zsh-autosuggestions zsh-syntax-highlighting)
 # ================================================================
 ## fish風の入力候補表示(→キーで確定)
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)  # 履歴に無ければ補完候補から出す
 if [ -e /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
